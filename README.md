@@ -1,7 +1,7 @@
 # Mask Fitting System
 
 ## Description
-The Mask Fitting System is a web-based application designed for hospitals to manage and track mask fittings for their staff. It features user authentication, a health declaration form, and a dashboard for managing mask fitting data.
+A web-based application designed for hospitals to manage and track mask fittings for their staff. It features user authentication, a health declaration form, and a dashboard for managing mask fitting data.
 
 
 ## Technologies Used
@@ -16,3 +16,28 @@ The Mask Fitting System is a web-based application designed for hospitals to man
 - npm (v6.0.0 or later)
 
 ### Steps
+1. Clone the repository
+```
+git clone https://github.com/your-username/mask-fitting-system.git
+cd mask-fitting-system
+```
+2. Install backend dependencies
+```
+cd backend
+npm install
+```
+2. Install frontend dependencies
+```
+cd ../frontend
+npm install
+```
+4. Start backend server
+```
+cd backend
+npm start
+```
+5. Start frontend server
+```
+cd frontend
+npm start
+```
