@@ -22,19 +22,14 @@ function Declaration() {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5001/api/submit-declaration', answers);
-      console.log('Response:', response.data);  // For debugging
       if (response.data.success) {
-        navigate('/dashboard');
+        navigate('/test-selection'); 
       } else {
         setError(response.data.message || 'You are not eligible to proceed.');
       }
     } catch (error) {
       console.error('Declaration submission error:', error.response?.data || error);
-      if (error.response && error.response.status === 403) {
-        setError(error.response.data.message || 'You are not eligible to proceed.');
-      } else {
-        setError('An error occurred. Please try again.');
-      }
+      setError('An error occurred. Please try again.');
     }
   };
 
