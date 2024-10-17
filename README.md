@@ -1,5 +1,3 @@
-# MaskFitting Proj
-
 # Hospital Mask Fitting System
 
 This project is a web application for a hospital's mask fitting system, built with React frontend and Flask backend.
