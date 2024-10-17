@@ -24,6 +24,11 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'CORS is working' });
 });
 
+// Start the server
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+  });
+
 // Login route
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
@@ -36,11 +41,8 @@ app.post('/api/login', (req, res) => {
   }
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
 
+//Declaration route
 app.post('/api/submit-declaration', (req, res) => {
     try {
       const { question1, question2, question3, question4, question5, question6 } = req.body;
