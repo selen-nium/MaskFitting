@@ -14,11 +14,39 @@ function EndOfThresholdTest() {
 
   const group = getGroup(sprayCount);
 
+  const containerStyle = {
+    maxWidth: '600px',
+    margin: '50px auto',
+    backgroundColor: 'white',
+    borderRadius: '20px',
+    padding: '40px',
+    boxShadow: '0 0 20px rgba(0, 0, 0, 0.1)',
+    textAlign: 'center',
+  };
+
+  const headingStyle = {
+    color: '#1a237e',
+    fontSize: '32px',
+    marginBottom: '30px',
+  };
+
+  const textStyle = {
+    fontSize: '18px',
+    marginBottom: '15px',
+  };
+
+  const resultStyle = {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color: '#1a237e',
+    marginTop: '30px',
+  };
+
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">End of Threshold Test</h2>
-      <p className="text-lg mb-2">Number of sprays: {sprayCount}</p>
-      <p className="text-lg font-semibold">You belong to Group {group}</p>
+    <div style={containerStyle}>
+      <h2 style={headingStyle}>End of Threshold Test</h2>
+      <p style={textStyle}>Number of sprays: {sprayCount}</p>
+      <p style={resultStyle}>You are in Group: {group}</p>
     </div>
   );
 }

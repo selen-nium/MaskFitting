@@ -5,11 +5,41 @@ function EndScreen() {
   const location = useLocation();
   const { maskModel } = location.state || {};
 
+  const containerStyle = {
+    maxWidth: '600px',
+    margin: '50px auto',
+    backgroundColor: 'white',
+    borderRadius: '20px',
+    padding: '40px',
+    boxShadow: '0 0 20px rgba(0, 0, 0, 0.1)',
+    textAlign: 'center',
+    fontFamily: 'Arial, sans-serif',
+  };
+
+  const headingStyle = {
+    color: '#1a237e',
+    fontSize: '32px',
+    marginBottom: '30px',
+  };
+
+  const paragraphStyle = {
+    fontSize: '18px',
+    marginBottom: '15px',
+    color: '#333',
+  };
+
+  const maskModelStyle = {
+    fontSize: '20px',
+    fontWeight: 'bold',
+    color: '#1a237e',
+    marginTop: '20px',
+  };
+
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Test Completed</h2>
-      <p className="text-lg mb-4">Thanks for taking the test!</p>
-      <p className="text-md">Your mask model: {maskModel}</p>
+    <div style={containerStyle}>
+      <h2 style={headingStyle}>Test Completed</h2>
+      <p style={paragraphStyle}>Thanks for taking the Mask Fit test!</p>
+      <p style={maskModelStyle}>Your mask model: {maskModel}</p>
     </div>
   );
 }

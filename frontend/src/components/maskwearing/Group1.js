@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import './Group.css';
 
 const SprayButton = ({ onSprayComplete, disabled }) => {
   const [isSpraying, setIsSpraying] = useState(false);
@@ -23,14 +24,15 @@ const SprayButton = ({ onSprayComplete, disabled }) => {
   };
 
   return (
-    <button 
-      onClick={handleSpray} 
+    <button
+      onClick={handleSpray}
       disabled={disabled || isSpraying}
-      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4 disabled:opacity-50"
+      className={`spray-button ${disabled || isSpraying ? 'disabled' : ''}`}
     >
       {isSpraying ? 'Spraying...' : 'Spray'}
     </button>
   );
+
 };
 
 function MaskFitTest1() {
@@ -57,38 +59,30 @@ function MaskFitTest1() {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Mask Fit Test: Group {group}</h2>
-      <p className="mb-4">You are using mask model: {maskModel}</p>
-      
-      {/* Add specific content for each group */}
-      {group === '1' && <p className="mb-4">Specific instructions for Group 1</p>}
-      
+    <div className="mask-fit-test-container">
+      <h2>Mask Fit Test: Group {group}</h2>
+      <p>You are using mask model: {maskModel}</p>
+      {group === '1' && <p>Place holder for specific instructions for Group 1</p>}
       {!testStarted ? (
-        <button 
-          onClick={handleStartTest} 
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-4"
-        >
-          Start Test
-        </button>
+        <div className="button-container">
+          <button onClick={handleStartTest} className="start-button">
+            Start Test
+          </button>
+        </div>
       ) : (
         <div>
-          <p className="text-lg font-semibold mb-4">Number of sprays: {sprayCount}</p>
-          <div className="flex space-x-4 mb-4">
+          <p className="spray-count">Number of sprays: {sprayCount}</p>
+          <div className="button-container">
             <SprayButton onSprayComplete={handleSprayComplete} disabled={!testStarted} />
-            <button 
-              onClick={handlePauseTest} 
-              className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
-            >
+            <button onClick={handlePauseTest} className="pause-button">
               Pause Test
             </button>
           </div>
-          <button 
-            onClick={handleCompleteTest}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Complete Test
-          </button>
+          <div className="button-container">
+            <button onClick={handleCompleteTest} className="complete-button">
+              Complete Test
+            </button>
+          </div>
         </div>
       )}
     </div>

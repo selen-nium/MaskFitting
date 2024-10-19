@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import './maskwearing.css';
 
 function ThreeMSpecial() {
   const navigate = useNavigate();
@@ -11,14 +12,12 @@ function ThreeMSpecial() {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Mask Wearing: 3M1870+</h2>
-      
+    <div className="mask-wearing-container">
+      <h2>Wearing: 3M1870+</h2>
       {/* Placeholder for video */}
-      <div className="w-[640px] h-[360px] bg-gray-300 flex justify-center items-center mb-4">
+      <div className="video-placeholder">
         Video Placeholder for 3M1870+
       </div>
-
       <button onClick={handleComplete}>Completed</button>
     </div>
   );
