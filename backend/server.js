@@ -181,6 +181,25 @@ app.post('/api/submit-declaration', async (req, res) => {
   }
 });
 
+app.post('/api/update-mask-model', async (req, res) => {
+  const { username, maskModel } = req.body;
+  
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    user.maskModel = maskModel;
+    await user.save();
+
+    res.json({ success: true, message: 'Mask model updated successfully' });
+  } catch (error) {
+    console.error('Error updating mask model:', error);
+    res.status(500).json({ success: false, message: 'An error occurred on the server' });
+  }
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

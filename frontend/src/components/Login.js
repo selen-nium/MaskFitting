@@ -38,7 +38,7 @@ function Login() {
         <img src={doctorsImage} alt="Doctors" />
       </div>
       <div className="form-container">
-        <h2>Welcome</h2>
+        <h2>Welcome,</h2>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
