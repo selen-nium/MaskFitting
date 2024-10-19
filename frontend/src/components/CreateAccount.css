@@ -1,0 +1,82 @@
+/* CreateAccount.css */
+
+body {
+    background-color: #e6f2ff;
+    font-family: Arial, sans-serif;
+}
+  
+.create-account-container {
+max-width: 400px;
+margin: 50px auto;
+background-color: white;
+border-radius: 20px;
+padding: 40px;
+box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+color: #1a237e;
+font-size: 32px;
+margin-bottom: 30px;
+text-align: center;
+}
+
+input, .phone-input {
+width: 100%;
+padding: 15px;
+margin-bottom: 20px;
+border: 1px solid #ccc;
+border-radius: 5px;
+font-size: 16px;
+box-sizing: border-box;
+}
+
+.phone-input {
+display: flex;
+}
+
+.phone-input span {
+padding: 15px;
+background-color: #e6f2ff;
+border: 1px solid #ccc;
+border-right: none;
+border-radius: 5px 0 0 5px;
+}
+
+.phone-input input {
+flex-grow: 1;
+border-left: none;
+border-radius: 0 5px 5px 0;
+margin-bottom: 0;
+}
+
+button {
+width: 100%;
+padding: 15px;
+background-color: #e6f2ff;
+color: #1a237e;
+border: none;
+border-radius: 5px;
+font-size: 18px;
+font-weight: bold;
+cursor: pointer;
+transition: background-color 0.3s;
+margin-top: 10px;
+}
+
+button:hover {
+background-color: #b3d9ff;
+}
+
+.error {
+color: red;
+margin-top: 10px;
+text-align: center;
+}
+
+.note {
+font-size: 14px;
+color: #666;
+margin-bottom: 15px;
+text-align: center;
+}

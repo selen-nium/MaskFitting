@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './CreateAccount.css';
 
 function CreateAccount() {
   const [step, setStep] = useState(1);
@@ -67,38 +68,36 @@ function CreateAccount() {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Create Account</h2>
+    <div className="create-account-container">
+      <h2>Create Account</h2>
       {step === 1 && (
         <div>
-          <p className="mb-2 text-sm text-gray-600">Note: This is a simulated verification. No real SMS will be sent.</p>
-          <div className="flex mb-2">
-            <span className="p-2 bg-gray-100 border rounded-l">+65</span>
+          <p className="note">Note: This is a simulated verification. No real SMS will be sent.</p>
+          <div className="phone-input">
+            <span>+65</span>
             <input
               type="tel"
               value={mobileNumber}
               onChange={(e) => setMobileNumber(e.target.value)}
               placeholder="Singapore Mobile Number"
-              className="flex-grow p-2 border rounded-r"
               maxLength="8"
             />
           </div>
-          <button onClick={handleSendVerificationCode} className="w-full p-2 bg-blue-500 text-white rounded">
+          <button onClick={handleSendVerificationCode}>
             Send Verification Code
           </button>
         </div>
       )}
       {step === 2 && (
         <div>
-          <p className="mb-2 text-sm text-gray-600">A verification code has been simulated. Check the console log.</p>
+          <p className="note">A verification code has been simulated. Check the console log.</p>
           <input
             type="text"
             value={verificationCode}
             onChange={(e) => setVerificationCode(e.target.value)}
             placeholder="Verification Code"
-            className="w-full p-2 mb-2 border rounded"
           />
-          <button onClick={handleVerifyCode} className="w-full p-2 bg-blue-500 text-white rounded">
+          <button onClick={handleVerifyCode}>
             Verify Code
           </button>
         </div>
@@ -110,21 +109,19 @@ function CreateAccount() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
-            className="w-full p-2 mb-2 border rounded"
           />
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
-            className="w-full p-2 mb-2 border rounded"
           />
-          <button onClick={handleCreateAccount} className="w-full p-2 bg-green-500 text-white rounded">
+          <button onClick={handleCreateAccount}>
             Create Account
           </button>
         </div>
       )}
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+      {error && <p className="error">{error}</p>}
     </div>
   );
 }

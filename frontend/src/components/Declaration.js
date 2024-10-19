@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './Declaration.css'; // Import the CSS file
 
 function Declaration() {
   const [answers, setAnswers] = useState({
@@ -21,8 +22,6 @@ function Declaration() {
       setUsername(storedUsername);
     } else {
       setError('User not logged in. Please log in first.');
-      // Optionally, redirect to login page
-      // navigate('/login');
     }
   }, [navigate]);
 
@@ -59,18 +58,18 @@ function Declaration() {
   ];
 
   if (!username) {
-    return <div>Please log in to access this page.</div>;
+    return <div className="login-message">Please log in to access this page.</div>;
   }
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Health Declaration</h2>
+    <div className="declaration-container">
+      <h2>Health Declaration</h2>
       <form onSubmit={handleSubmit}>
         {questions.map((question, index) => (
-          <div key={index} className="mb-4">
-            <p className="mb-2">{question}</p>
-            <div className="flex space-x-4">
-              <label className="inline-flex items-center">
+          <div key={index} className="question-container">
+            <p className="question-text">{question}</p>
+            <div className="radio-group">
+              <label className="radio-option">
                 <input
                   type="radio"
                   name={`question${index + 1}`}
@@ -78,11 +77,11 @@ function Declaration() {
                   checked={answers[`question${index + 1}`] === 'yes'}
                   onChange={handleChange}
                   required
-                  className="form-radio"
                 />
-                <span className="ml-2">Yes</span>
+                <span className="custom-radio"></span>
+                <span>Yes</span>
               </label>
-              <label className="inline-flex items-center">
+              <label className="radio-option">
                 <input
                   type="radio"
                   name={`question${index + 1}`}
@@ -90,21 +89,18 @@ function Declaration() {
                   checked={answers[`question${index + 1}`] === 'no'}
                   onChange={handleChange}
                   required
-                  className="form-radio"
                 />
-                <span className="ml-2">No</span>
+                <span className="custom-radio"></span>
+                <span>No</span>
               </label>
             </div>
           </div>
         ))}
-        <button 
-          type="submit" 
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
-        >
+        <button type="submit">
           Submit
         </button>
       </form>
-      {error && <p className="text-red-500 mt-4">{error}</p>}
+      {error && <p className="error">{error}</p>}
     </div>
   );
 }
