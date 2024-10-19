@@ -49,7 +49,7 @@ function Declaration() {
         {questions.map((question, index) => (
           <div key={index}>
             <p>{question}</p>
-            <label>
+            <label> 
               <input
                 type="radio"
                 name={`question${index + 1}`}
