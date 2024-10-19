@@ -1,13 +1,26 @@
 const express = require('express');
+const { SerialPort } = require('serialport');
+const { ReadlineParser } = require('@serialport/parser-readline');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = 5001;
+const serverPort = 5001;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+
+// SerialPort setup
+const portPath = '/dev/cu.usbserial-A50285BI'; // Adjust this based on your system
+const serialPort = new SerialPort({ path: portPath, baudRate: 9600 }, (err) => {
+  if (err) {
+    return console.error('Error opening serial port:', err);
+  }
+  console.log('Serial port opened successfully');
+});
+
+const parser = serialPort.pipe(new ReadlineParser({ delimiter: '\n' }));
 
 // Root route
 app.get('/', (req, res) => {
@@ -24,11 +37,6 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'CORS is working' });
 });
 
-// Start the server
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-  });
-
 // Login route
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
@@ -41,8 +49,27 @@ app.post('/api/login', (req, res) => {
   }
 });
 
+// Spray route
+app.post('/api/spray', (req, res) => {
+  serialPort.write('SPRAY\n', (err) => {
+    if (err) {
+      console.error('Error on write: ', err.message);
+      return res.status(500).json({ error: 'Failed to initiate spray' });
+    }
+    console.log('Spray command sent');
+  });
 
-//Declaration route
+  parser.once('data', (data) => {
+    console.log('Data received from Arduino:', data);
+    if (data.trim() === 'DONE') {
+      res.json({ message: 'Triple spray completed' });
+    } else {
+      res.status(500).json({ error: 'Unexpected response from Arduino' });
+    }
+  });
+});
+
+// Declaration route
 app.post('/api/submit-declaration', (req, res) => {
     try {
       const { question1, question2, question3, question4, question5, question6 } = req.body;
@@ -64,4 +91,9 @@ app.post('/api/submit-declaration', (req, res) => {
       console.error('Error processing declaration:', error);
       res.status(500).json({ success: false, message: 'An error occurred on the server' });
     }
+});
+
+// Start the server
+app.listen(serverPort, () => {
+    console.log(`Server running at http://localhost:${serverPort}`);
 });
