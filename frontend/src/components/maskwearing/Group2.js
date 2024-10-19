@@ -1,21 +1,40 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function MaskFitTest2() {
+  const navigate = useNavigate();
   const location = useLocation();
   const { group, maskModel } = location.state || {};
+  const [testStarted, setTestStarted] = useState(false);
+
+  const handleStartTest = () => {
+    setTestStarted(true);
+  };
+
+  const handlePauseTest = () => {
+    navigate('/failure', { state: { group, maskModel } });
+  };
+
+  const handleCompleteTest = () => {
+    navigate('/end-screen', { state: { group, maskModel } });
+  };
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Mask Fit Test 1: Group 2</h2>
+      <h2 className="text-2xl font-bold mb-4">Mask Fit Test: Group {group}</h2>
       <p className="mb-4">You are using mask model: {maskModel}</p>
       
       {/* Add specific content for each group */}
-      {group === '1' && <p>Specific instructions for Group 1</p>}
-      {group === '2' && <p>Specific instructions for Group 2</p>}
-      {group === '3' && <p>Specific instructions for Group 3</p>}
+      {group === '2' && <p className="mb-4">Specific instructions for Group 2</p>}
       
-      {/* Add more components or logic as needed for the mask fit test */}
+      {!testStarted ? (
+        <button onClick={handleStartTest} className="mr-4">Start Test</button>
+      ) : (
+        <div>
+          <button onClick={handlePauseTest} className="mr-4">Pause Test</button>
+          <button onClick={handleCompleteTest}>Complete Test</button>
+        </div>
+      )}
     </div>
   );
 }

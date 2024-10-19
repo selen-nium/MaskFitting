@@ -14,6 +14,8 @@ import Halyard from './components/maskwearing/Halyard';
 import MaskFitTest1 from './components/maskwearing/Group1';
 import MaskFitTest2 from './components/maskwearing/Group2';
 import MaskFitTest3 from './components/maskwearing/Group3';
+import FailurePage from './components/maskwearing/FailurePage';
+import EndScreen from './components/maskwearing/EndScreen';
 
 function App() {
   return (
@@ -32,6 +34,8 @@ function App() {
         <Route path="/mask-fit-test-1/group-1" element={<PrivateRoute><MaskFitTest1 /></PrivateRoute>} />
         <Route path="/mask-fit-test-1/group-2" element={<PrivateRoute><MaskFitTest2 /></PrivateRoute>} />
         <Route path="/mask-fit-test-1/group-3" element={<PrivateRoute><MaskFitTest3 /></PrivateRoute>} />
+        <Route path="/failure" element={<PrivateRoute><FailurePage /></PrivateRoute>} />
+        <Route path="/end-screen" element={<PrivateRoute><EndScreen /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
