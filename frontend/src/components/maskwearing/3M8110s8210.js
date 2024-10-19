@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 
-function threeMnormal() {
+function ThreeMNormal() {
   const navigate = useNavigate();
   const location = useLocation();
   const { group, maskModel } = location.state || {};
@@ -25,4 +25,4 @@ function threeMnormal() {
   );
 }
 
-export default threeMnormal;
+export default ThreeMNormal;

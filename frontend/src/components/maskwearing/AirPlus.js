@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-function airPlus() {
+function AirPlus() {
   const navigate = useNavigate();
   const location = useLocation();
   const { group, maskModel } = location.state || {};
@@ -24,4 +24,4 @@ function airPlus() {
   );
 }
 
-export default airPlus;
+export default AirPlus;
