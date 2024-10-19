@@ -1,6 +1,38 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const SprayButton = ({ onSprayComplete }) => {
+  const [isSpraying, setIsSpraying] = useState(false);
+
+  const handleSpray = async () => {
+    setIsSpraying(true);
+    try {
+      const response = await fetch('http://localhost:5001/api/spray', { method: 'POST' });
+      if (!response.ok) {
+        throw new Error('Spray failed');
+      }
+      const data = await response.json();
+      if (data.message === 'Triple spray completed') {
+        onSprayComplete();
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsSpraying(false);
+    }
+  };
+
+  return (
+    <button 
+      onClick={handleSpray} 
+      disabled={isSpraying}
+      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      {isSpraying ? 'Spraying...' : 'Spray'}
+    </button>
+  );
+};
+
 function ThresholdTest() {
   const [testStarted, setTestStarted] = useState(false);
   const [sprayCount, setSprayCount] = useState(0);
@@ -10,8 +42,8 @@ function ThresholdTest() {
     setTestStarted(true);
   };
 
-  const handleSpray = () => {
-    setSprayCount(prevCount => prevCount + 1);
+  const handleSprayComplete = () => {
+    setSprayCount(prevCount => prevCount + 3); // Increment by 3 for each successful spray
   };
 
   const completeTest = () => {
@@ -32,11 +64,21 @@ function ThresholdTest() {
       )}
 
       {!testStarted ? (
-        <button onClick={startTest}>Start Test</button>
+        <button 
+          onClick={startTest}
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Start Test
+        </button>
       ) : (
         <div className="flex space-x-4">
-          <button onClick={handleSpray}>Spray</button>
-          <button onClick={completeTest}>Complete Test</button>
+          <SprayButton onSprayComplete={handleSprayComplete} />
+          <button 
+            onClick={completeTest}
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Complete Test
+          </button>
         </div>
       )}
     </div>
