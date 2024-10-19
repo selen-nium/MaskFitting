@@ -6,6 +6,7 @@ import TestSelection from './components/TestSelection';
 import ThresholdTest from './components/ThresholdTest';
 import MaskFitTest from './components/MaskFitTest';
 import PrivateRoute from './components/PrivateRoute';
+import CreateAccount from './components/CreateAccount';
 import EndOfThresholdTest from './components/EndOfThresholdTest';
 import ThreeMSpecial from './components/maskwearing/3M1870Plus';
 import ThreeMNormal from './components/maskwearing/3M8110s8210';
@@ -16,6 +17,8 @@ import MaskFitTest2 from './components/maskwearing/Group2';
 import MaskFitTest3 from './components/maskwearing/Group3';
 import FailurePage from './components/maskwearing/FailurePage';
 import EndScreen from './components/maskwearing/EndScreen';
+
+
 
 function App() {
   return (
@@ -36,6 +39,7 @@ function App() {
         <Route path="/mask-fit-test-1/group-3" element={<PrivateRoute><MaskFitTest3 /></PrivateRoute>} />
         <Route path="/failure" element={<PrivateRoute><FailurePage /></PrivateRoute>} />
         <Route path="/end-screen" element={<PrivateRoute><EndScreen /></PrivateRoute>} />
+        <Route path="/create-account" element={<PrivateRoute><CreateAccount /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
