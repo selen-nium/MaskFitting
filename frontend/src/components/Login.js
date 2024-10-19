@@ -12,8 +12,10 @@ function Login() {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5001/api/login', { username, password });
+      console.log('Login response:', response.data); // Debug log
       if (response.data.success) {
-        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('username', username);
+        console.log('Username stored in localStorage:', username); // Debug log
         navigate('/declaration');
       } else {
         setError('Invalid credentials');
@@ -24,17 +26,21 @@ function Login() {
     }
   };
 
+  const handleCreateAccount = () => {
+    navigate('/create-account');
+  };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="p-4 max-w-md mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Login</h2>
+      <form onSubmit={handleSubmit} className="mb-4">
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
           required
+          className="w-full p-2 mb-2 border rounded"
         />
         <input
           type="password"
@@ -42,10 +48,19 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           required
+          className="w-full p-2 mb-2 border rounded"
         />
-        <button type="submit">Login</button>
+        <button type="submit" className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200">
+          Login
+        </button>
       </form>
-      {error && <p>{error}</p>}
+      <button 
+        onClick={handleCreateAccount} 
+        className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-200"
+      >
+        Create Account
+      </button>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
     </div>
   );
 }
