@@ -7,7 +7,7 @@ function MaskFitTest3() {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Mask Fit Test 1: Group {group}</h2>
+      <h2 className="text-2xl font-bold mb-4">Mask Fit Test 1: Group 3</h2>
       <p className="mb-4">You are using mask model: {maskModel}</p>
       
       {/* Add specific content for each group */}

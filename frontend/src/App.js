@@ -7,9 +7,9 @@ import ThresholdTest from './components/ThresholdTest';
 import MaskFitTest from './components/MaskFitTest';
 import PrivateRoute from './components/PrivateRoute';
 import EndOfThresholdTest from './components/EndOfThresholdTest';
-import threeMspecial from './components/maskwearing/3M1870Plus';
-import threeMnormal from './components/maskwearing/3M8110s8210';
-import airPlus from './components/maskwearing/AirPlus';
+import ThreeMSpecial from './components/maskwearing/3M1870Plus';
+import ThreeMNormal from './components/maskwearing/3M8110s8210';
+import AirPlus from './components/maskwearing/AirPlus';
 import Halyard from './components/maskwearing/Halyard';
 import MaskFitTest1 from './components/maskwearing/Group1';
 import MaskFitTest2 from './components/maskwearing/Group2';
@@ -25,10 +25,10 @@ function App() {
         <Route path="/threshold-test" element={<PrivateRoute><ThresholdTest /></PrivateRoute>} />
         <Route path="/mask-fit-test" element={<PrivateRoute><MaskFitTest /></PrivateRoute>} />
         <Route path="/end-of-threshold-test" element={<PrivateRoute><EndOfThresholdTest /></PrivateRoute>} />
-        <Route path="/mask-wearing/3m-1870-plus" element={<PrivateRoute><threeMspecial /></PrivateRoute>} />
-        <Route path="/mask-wearing/3m-8110s-8210" element={<PrivateRoute><threeMnormal /></PrivateRoute>} />
-        <Route path="/mask-wearing/air-plus" element={<PrivateRoute><airPlus /></PrivateRoute>} />
-        <Route path="/mask-wearing/halyard" element={<PrivateRoute><Halyard /></PrivateRoute>} />
+        <Route path="/mask-wearing/3m-1870-plus" element={<ThreeMSpecial />} />
+        <Route path="/mask-wearing/3m-8110s-8210" element={<ThreeMNormal />} />
+        <Route path="/mask-wearing/air-plus" element={<AirPlus />} />
+        <Route path="/mask-wearing/halyard" element={<Halyard />} />
         <Route path="/mask-fit-test-1/group-1" element={<PrivateRoute><MaskFitTest1 /></PrivateRoute>} />
         <Route path="/mask-fit-test-1/group-2" element={<PrivateRoute><MaskFitTest2 /></PrivateRoute>} />
         <Route path="/mask-fit-test-1/group-3" element={<PrivateRoute><MaskFitTest3 /></PrivateRoute>} />
