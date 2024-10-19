@@ -57,6 +57,7 @@ const userSchema = new mongoose.Schema({
   lastTestDate: { type: Date, default: null }
 });
 
+const User = mongoose.model('User', userSchema);
 
 // Verification code storage (in-memory for demonstration)
 // In a production environment, you'd want to use a more persistent and secure storage method
