@@ -1,16 +1,36 @@
 require('dotenv').config();
 const express = require('express');
+const { SerialPort } = require('serialport');
+const { ReadlineParser } = require('@serialport/parser-readline');
 const cors = require('cors');
 // const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const app = express();
+const serverPort = 5001;
 const port = process.env.PORT || 5001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+
+// SerialPort setup
+const portPath = '/dev/cu.usbserial-A50285BI'; // Adjust this based on your system
+const serialPort = new SerialPort({ path: portPath, baudRate: 9600 }, (err) => {
+  if (err) {
+    return console.error('Error opening serial port:', err);
+  }
+  console.log('Serial port opened successfully');
+});
+
+const parser = serialPort.pipe(new ReadlineParser({ delimiter: '\n' }));
+
+// Root route
+app.get('/', (req, res) => {
+    res.send('Mask Fitting System API is running');
+});
 
 // MongoDB Connection
 const connectDB = async () => {
@@ -26,7 +46,6 @@ const connectDB = async () => {
     process.exit(1); // Exit the process with failure
   }
 };
-
 connectDB();
 
 // User Schema
@@ -38,7 +57,6 @@ const userSchema = new mongoose.Schema({
   lastTestDate: { type: Date, default: null }
 });
 
-const User = mongoose.model('User', userSchema);
 
 // Verification code storage (in-memory for demonstration)
 // In a production environment, you'd want to use a more persistent and secure storage method
@@ -90,6 +108,28 @@ app.post('/api/create-account', async (req, res) => {
     res.status(500).json({ success: false, message: 'An error occurred on the server' });
   }
 });
+
+
+// Spray route
+app.post('/api/spray', (req, res) => {
+  serialPort.write('SPRAY\n', (err) => {
+    if (err) {
+      console.error('Error on write: ', err.message);
+      return res.status(500).json({ error: 'Failed to initiate spray' });
+    }
+    console.log('Spray command sent');
+  });
+
+  parser.once('data', (data) => {
+    console.log('Data received from Arduino:', data);
+    if (data.trim() === 'DONE') {
+      res.json({ message: 'Triple spray completed' });
+    } else {
+      res.status(500).json({ error: 'Unexpected response from Arduino' });
+    }
+  });
+});
+
 
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
