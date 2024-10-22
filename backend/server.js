@@ -17,7 +17,7 @@ app.use(express.json());
 
 
 // SerialPort setup
-const portPath = '/dev/cu.usbserial-A50285BI'; // Adjust this based on your system
+const portPath = '/dev/cu.usbserial-210'; // Adjust this based on your system
 const serialPort = new SerialPort({ path: portPath, baudRate: 9600 }, (err) => {
   if (err) {
     return console.error('Error opening serial port:', err);
@@ -128,6 +128,7 @@ app.post('/api/spray', (req, res) => {
     } else {
       res.status(500).json({ error: 'Unexpected response from Arduino' });
     }
+  
   });
 });
 
@@ -179,6 +180,44 @@ app.post('/api/submit-declaration', async (req, res) => {
     console.error('Error processing declaration:', error);
     res.status(500).json({ success: false, message: 'An error occurred on the server' });
   }
+});
+// Add lock control endpoints
+app.post('/api/unlock', (req, res) => {
+  serialPort.write('UNLOCK\n', (err) => {
+    if (err) {
+      console.error('Error on write: ', err.message);
+      return res.status(500).json({ error: 'Failed to unlock' });
+    }
+    console.log('Unlock command sent');
+  });
+
+  parser.once('data', (data) => {
+    console.log('Data received from Arduino:', data);
+    if (data.trim() === 'UNLOCKED'){
+      res.json({ message: 'UNLOCKED' });
+    } else {
+      res.status(500).json({ error: 'Unexpected response from Arduino' });
+    }
+  });
+});
+
+app.post('/api/lock', (req, res) => {
+  serialPort.write('LOCK\n', (err) => {
+    if (err) {
+      console.error('Error on write: ', err.message);
+      return res.status(500).json({ error: 'Failed to lock' });
+    }
+    console.log('Lock command sent');
+  });
+
+  parser.once('data', (data) => {
+    console.log('Data received from Arduino:', data);
+    if (data.trim() === 'LOCKED') {
+      res.json({ message: 'Successfully locked' });
+    } else {
+      res.status(500).json({ error: 'Unexpected response from Arduino' });
+    }
+  });
 });
 
 app.post('/api/update-mask-model', async (req, res) => {

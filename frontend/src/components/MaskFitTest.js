@@ -8,26 +8,52 @@ function MaskFitTest() {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    if (group && maskModel) {
-      let maskWearingPath;
-      if (['3M8110S', '3M8210'].includes(maskModel)) {
-        maskWearingPath = '/mask-wearing/3m-8110s-8210';
-      } else if (maskModel === '3M1870+') {
-        maskWearingPath = '/mask-wearing/3m-1870-plus';
-      } else if (maskModel.startsWith('Air+')) {
-        maskWearingPath = '/mask-wearing/air-plus';
-      } else if (maskModel.startsWith('HALYARD')) {
-        maskWearingPath = '/mask-wearing/halyard';
-      }
-      navigate(maskWearingPath, { state: { group, maskModel } });
-    } else {
-      alert('Please select both a group and a mask model.');
-    }
+  const handleUnlock = () => {
+    // Fire and forget the unlock request
+    fetch('http://localhost:5001/api/unlock', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    // Immediately set as unlocked
+    setIsUnlocked(true);
   };
 
-  const handleUnlock = () => {
-    setIsUnlocked(true);
+  const handleSubmit = () => {
+    if (!group || !maskModel) {
+      alert('Please select both a group and a mask model.');
+      return;
+    }
+
+    // Get the navigation path
+    let maskWearingPath;
+    if (['3M8110S', '3M8210'].includes(maskModel)) {
+      maskWearingPath = '/mask-wearing/3m-8110s-8210';
+    } else if (maskModel === '3M1870+') {
+      maskWearingPath = '/mask-wearing/3m-1870-plus';
+    } else if (maskModel.startsWith('Air+')) {
+      maskWearingPath = '/mask-wearing/air-plus';
+    } else if (maskModel.startsWith('HALYARD')) {
+      maskWearingPath = '/mask-wearing/halyard';
+    }
+
+    // Fire and forget the lock request
+    fetch('http://localhost:5001/api/lock', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Immediately navigate
+    navigate(maskWearingPath, { 
+      state: { 
+        group, 
+        maskModel 
+      } 
+    });
   };
 
   return (
