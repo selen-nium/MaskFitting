@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ThresholdTest.css';
+import AutoVideoRecorder from '../AudioVideoRecorder.js';
 
 const SprayButton = ({ onSprayComplete }) => {
   const [isSpraying, setIsSpraying] = useState(false);
@@ -54,6 +55,8 @@ function ThresholdTest() {
   return (
     <div className="threshold-test-container">
       <h2>Threshold Test</h2>
+      <p>The recording will automatically start when this page loads and stop when you leave.</p>
+      <AutoVideoRecorder />
       <div className="video-placeholder">
         Video Placeholder
       </div>

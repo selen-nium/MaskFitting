@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './maskwearing.css';
+import AutoVideoRecorder from '../../AudioVideoRecorder.js';
 
 function AirPlus() {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ function AirPlus() {
   return (
     <div className="mask-wearing-container">
       <h2>Wearing: {maskModel}</h2>
+      <p>The recording will automatically start when this page loads and stop when you leave.</p>
+      <AutoVideoRecorder />
       {/* Placeholder for video */}
       <div className="video-placeholder">
         Video Placeholder for Air+
