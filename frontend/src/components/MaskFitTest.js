@@ -5,6 +5,7 @@ import './MaskFitTest.css';
 function MaskFitTest() {
   const [group, setGroup] = useState('');
   const [maskModel, setMaskModel] = useState('');
+  const [isUnlocked, setIsUnlocked] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = () => {
@@ -23,6 +24,10 @@ function MaskFitTest() {
     } else {
       alert('Please select both a group and a mask model.');
     }
+  };
+
+  const handleUnlock = () => {
+    setIsUnlocked(true);
   };
 
   return (
@@ -58,7 +63,31 @@ function MaskFitTest() {
           <option value="HALYARD(Regular)">HALYARD(Regular)</option>
         </select>
       </div>
-      <button onClick={handleSubmit}>Continue</button>
+      {!isUnlocked ? (
+        <button 
+          onClick={handleUnlock}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
+        >
+          Unlock to Continue
+        </button>
+      ) : (
+        <button 
+          onClick={handleSubmit}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
+        >
+          Continue
+        </button>
+      )}
     </div>
   );
 }

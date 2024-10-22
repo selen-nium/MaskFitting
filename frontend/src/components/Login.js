@@ -18,7 +18,7 @@ function Login() {
       if (response.data.success) {
         localStorage.setItem('username', username);
         console.log('Username stored in localStorage:', username);
-        navigate('/declaration');
+        navigate('/Declaration');
       } else {
         setError('Invalid credentials');
       }
