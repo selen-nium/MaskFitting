@@ -1,39 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import SprayButton from '../SprayButton';
 import './Group.css';
-
-const SprayButton = ({ onSprayComplete, disabled }) => {
-  const [isSpraying, setIsSpraying] = useState(false);
-
-  const handleSpray = async () => {
-    setIsSpraying(true);
-    try {
-      const response = await fetch('http://localhost:5001/api/spray', { method: 'POST' });
-      if (!response.ok) {
-        throw new Error('Spray failed');
-      }
-      const data = await response.json();
-      if (data.message === 'Triple spray completed') {
-        onSprayComplete();
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setIsSpraying(false);
-    }
-  };
-
-  return (
-    <button
-      onClick={handleSpray}
-      disabled={disabled || isSpraying}
-      className={`spray-button ${disabled || isSpraying ? 'disabled' : ''}`}
-    >
-      {isSpraying ? 'Spraying...' : 'Spray'}
-    </button>
-  );
-
-};
 
 function MaskFitTest1() {
   const navigate = useNavigate();
@@ -54,8 +22,8 @@ function MaskFitTest1() {
     navigate('/end-screen', { state: { group, maskModel, sprayCount } });
   };
 
-  const handleSprayComplete = () => {
-    setSprayCount(prevCount => prevCount + 3); // Increment by 3 for each successful spray
+  const handleSprayComplete = (totalSprays) => {
+    setSprayCount(totalSprays);
   };
 
   return (

@@ -17,7 +17,8 @@ app.use(express.json());
 
 
 // SerialPort setup
-const portPath = '/dev/cu.usbserial-210'; // Adjust this based on your system
+// const portPath = '/dev/cu.usbserial-210'; // Adjust this based on your system 
+const portPath = '/dev/cu.usbserial-110'; // this is for selen's mac
 const serialPort = new SerialPort({ path: portPath, baudRate: 9600 }, (err) => {
   if (err) {
     return console.error('Error opening serial port:', err);
@@ -111,24 +112,85 @@ app.post('/api/create-account', async (req, res) => {
 });
 
 
-// Spray route
+// Spray routes
+// Server.js spray endpoint
 app.post('/api/spray', (req, res) => {
+  console.log('Spray endpoint hit');
+  let dataBuffer = '';
+  let responseReceived = false;
+  let responseTimeout;
+
+  // Calculate timeout: 5 sprays × (3000ms spray time + 3000ms return time) + 5000ms buffer
+  const TIMEOUT_DURATION = (5 * 6000) + 5000; // 35 seconds total
+
+  const sendResponse = (responseData) => {
+    if (!responseReceived) {
+      responseReceived = true;
+      clearTimeout(responseTimeout);
+      parser.removeListener('data', handleArduinoResponse);
+      res.json(responseData);
+    }
+  };
+
+  const handleArduinoResponse = (data) => {
+    if (responseReceived) return;
+    
+    console.log('Raw data from Arduino:', data);
+    dataBuffer += data.toString();
+    console.log('Current buffer:', dataBuffer);
+
+    // Check for spray count in the accumulated data
+    const match = dataBuffer.match(/Total Sprays Completed: (\d+)/);
+    if (match) {
+      const sprayCount = parseInt(match[1]);
+      console.log('Found spray count:', sprayCount);
+      
+      const wasStopped = dataBuffer.includes('Spraying stopped!');
+      console.log('Was stopped:', wasStopped);
+
+      sendResponse({ 
+        message: wasStopped ? 'Spray stopped' : 'Spray completed',
+        totalSprays: sprayCount
+      });
+    }
+  };
+
+  // Set up timeout handler
+  responseTimeout = setTimeout(() => {
+    console.log('Timeout reached. Current buffer:', dataBuffer);
+    sendResponse({ error: 'Timeout waiting for Arduino response' });
+  }, TIMEOUT_DURATION);
+
+  // Attach the data listener before sending the command
+  parser.on('data', handleArduinoResponse);
+
+  // Send the spray command
   serialPort.write('SPRAY\n', (err) => {
     if (err) {
       console.error('Error on write: ', err.message);
-      return res.status(500).json({ error: 'Failed to initiate spray' });
+      sendResponse({ error: 'Failed to initiate spray' });
+    } else {
+      console.log('Spray command sent to Arduino');
     }
-    console.log('Spray command sent');
   });
 
-  parser.once('data', (data) => {
-    console.log('Data received from Arduino:', data);
-    if (data.trim() === 'DONE') {
-      res.json({ message: 'Triple spray completed' });
-    } else {
-      res.status(500).json({ error: 'Unexpected response from Arduino' });
+  // Clean up on response finish
+  res.on('finish', () => {
+    if (!responseReceived) {
+      parser.removeListener('data', handleArduinoResponse);
+      clearTimeout(responseTimeout);
     }
-  
+  });
+});
+
+app.post('/api/stop-spray', (req, res) => {
+  serialPort.write('STOP\n', (err) => {
+    if (err) {
+      console.error('Error on write: ', err.message);
+      return res.status(500).json({ error: 'Failed to stop spray' });
+    }
+    console.log('Stop command sent');
+    res.json({ message: 'Stop command sent successfully' });
   });
 });
 

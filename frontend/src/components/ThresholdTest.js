@@ -2,38 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ThresholdTest.css';
 import AutoVideoRecorder from '../AudioVideoRecorder.js';
-
-const SprayButton = ({ onSprayComplete }) => {
-  const [isSpraying, setIsSpraying] = useState(false);
-
-  const handleSpray = async () => {
-    setIsSpraying(true);
-    try {
-      const response = await fetch('http://localhost:5001/api/spray', { method: 'POST' });
-      if (!response.ok) {
-        throw new Error('Spray failed');
-      }
-      const data = await response.json();
-      if (data.message === 'Triple spray completed') {
-        onSprayComplete();
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setIsSpraying(false);
-    }
-  };
-
-  return (
-    <button
-      onClick={handleSpray}
-      disabled={isSpraying}
-      className={`button spray-button ${isSpraying ? 'disabled' : ''}`}
-    >
-      {isSpraying ? 'Spraying...' : 'Spray'}
-    </button>
-  );
-};
+import SprayButton from './SprayButton.js';
 
 function ThresholdTest() {
   const [testStarted, setTestStarted] = useState(false);
@@ -44,8 +13,8 @@ function ThresholdTest() {
     setTestStarted(true);
   };
 
-  const handleSprayComplete = () => {
-    setSprayCount(prevCount => prevCount + 3);
+  const handleSprayComplete = (totalSprays) => {
+    setSprayCount(totalSprays);
   };
 
   const completeTest = () => {
