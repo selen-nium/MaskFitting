@@ -1,0 +1,351 @@
+
+body {
+    background-color: #e6f2ff;
+    font-family: Arial, sans-serif;
+}
+  
+/* Common container styles */
+.container {
+background-color: white;
+border-radius: 20px;
+padding: 40px;
+box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+margin: 50px auto;
+}
+
+/* Container sizes */
+.container-sm {
+max-width: 400px;
+}
+
+.container-md {
+max-width: 600px;
+}
+
+.container-lg {
+max-width: 700px;
+}
+
+.container-xl {
+max-width: 1000px;
+}
+
+/* Typography */
+h2 {
+color: #1a237e;
+font-size: 32px;
+margin-bottom: 30px;
+text-align: center;
+}
+
+p {
+font-size: 18px;
+margin-bottom: 15px;
+color: #333;
+}
+
+/* Form elements */
+input, select, .phone-input {
+width: 100%;
+padding: 15px;
+margin-bottom: 20px;
+border: 1px solid #ccc;
+border-radius: 5px;
+font-size: 16px;
+box-sizing: border-box;
+}
+
+select {
+appearance: none;
+-webkit-appearance: none;
+-moz-appearance: none;
+background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+background-repeat: no-repeat;
+background-position: right 10px top 50%;
+background-color: white;
+}
+
+select:focus {
+outline: none;
+border-color: #1a237e;
+}
+
+.phone-input {
+display: flex;
+}
+
+.phone-input span {
+padding: 15px;
+background-color: #e6f2ff;
+border: 1px solid #ccc;
+border-right: none;
+border-radius: 5px 0 0 5px;
+}
+
+.phone-input input {
+flex-grow: 1;
+border-left: none;
+border-radius: 0 5px 5px 0;
+margin-bottom: 0;
+}
+
+label {
+display: block;
+margin-bottom: 8px;
+font-size: 18px;
+font-weight: bolder;
+color: black;
+}
+
+/* Buttons */
+button {
+width: 100%;
+padding: 15px;
+border: none;
+border-radius: 5px;
+font-size: 18px;
+font-weight: bold;
+cursor: pointer;
+transition: background-color 0.3s;
+margin-top: 10px;
+}
+
+/* Button variants */
+.btn-primary {
+background-color: #1a237e;
+color: white;
+}
+
+.btn-primary:hover {
+background-color: #3f51b5;
+}
+
+.btn-secondary {
+background-color: #e6f2ff;
+color: #1a237e;
+}
+
+.btn-secondary:hover {
+background-color: #b3d9ff;
+}
+
+.btn-success {
+background-color: #4caf50;
+color: white;
+}
+
+.btn-success:hover {
+background-color: #45a049;
+}
+
+.btn-warning {
+background-color: #ffc107;
+color: #333;
+}
+
+.btn-warning:hover {
+background-color: #ffb300;
+}
+
+.btn-danger {
+background-color: #f44336;
+color: white;
+}
+
+.btn-danger:hover {
+background-color: #e53935;
+}
+
+button:disabled {
+background-color: #bdbdbd;
+cursor: not-allowed;
+opacity: 0.7;
+}
+
+/* Button container */
+.button-container {
+display: flex;
+justify-content: center;
+gap: 15px;
+margin-bottom: 20px;
+}
+
+/* Utility classes */
+.text-center {
+text-align: center;
+}
+
+.mb-20 {
+margin-bottom: 20px;
+}
+
+.mt-20 {
+margin-top: 20px;
+}
+
+/* Status and feedback */
+.error {
+color: red;
+margin-top: 10px;
+text-align: center;
+}
+
+.note {
+font-size: 14px;
+color: #666;
+margin-bottom: 15px;
+text-align: center;
+}
+
+/* Radio buttons */
+.radio-group {
+display: grid;
+justify-content: space-between;
+align-items: center;
+margin-top: 10px;
+}
+
+.radio-option {
+display: flex;
+align-items: center;
+cursor: pointer;
+margin: 5px;
+}
+
+.radio-option input[type="radio"] {
+opacity: 0;
+position: absolute;
+}
+
+.radio-option .custom-radio {
+width: 18px;
+height: 18px;
+border: 2px solid #1a237e;
+border-radius: 50%;
+display: inline-block;
+position: relative;
+margin-right: 10px;
+}
+
+.radio-option input[type="radio"]:checked + .custom-radio::after {
+content: "";
+width: 12px;
+height: 12px;
+background-color: #1a237e;
+border-radius: 50%;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+}
+
+/* Layout helpers */
+.flex {
+display: flex;
+}
+
+.justify-between {
+justify-content: space-between;
+}
+
+.align-center {
+align-items: center;
+}
+
+/* Video placeholder */
+.video-placeholder {
+width: 640px;
+height: 360px;
+background-color: #e0e0e0;
+display: flex;
+justify-content: center;
+align-items: center;
+margin: 0 auto 20px;
+border-radius: 10px;
+color: #666;
+font-size: 18px;
+}
+
+/* App specific styles (consider moving to component-specific files if needed) */
+.App {
+text-align: center;
+}
+
+.App-logo {
+height: 40vmin;
+pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+.App-logo {
+    animation: App-logo-spin infinite 20s linear;
+}
+}
+
+.App-header {
+background-color: #282c34;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+font-size: calc(10px + 2vmin);
+color: white;
+}
+
+.App-link {
+color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+from {
+    transform: rotate(0deg);
+}
+to {
+    transform: rotate(360deg);
+}
+}
+
+/* Login specific */
+.login-container {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin: 130px auto;
+overflow: hidden;
+}
+
+.image-container {
+flex: 1;
+padding: 40px;
+background-color: #e6f2ff;
+}
+
+.image-container img {
+max-width: 100%;
+height: auto;
+}
+
+.form-container {
+flex: 1;
+padding: 40px;
+}
+
+.login-container h2 {
+font-size: 48px;
+}
+
+/* Mask fit test specific */
+.spray-count {
+font-size: 20px;
+font-weight: bold;
+margin-bottom: 20px;
+color: #1a237e;
+}
+
+.question-text {
+font-size: 18px;
+font-weight: bolder;
+margin-bottom: 10px;
+color: black;
+}

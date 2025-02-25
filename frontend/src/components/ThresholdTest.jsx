@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ThresholdTest.css';
-import AutoVideoRecorder from '../AudioVideoRecorder.js';
-import SprayButton from './SprayButton.js';
+// import './ThresholdTest.css';
+import AutoVideoRecorder from './AudioVideoRecorder.jsx';
+import SprayButton from './SprayButton';
 
 function ThresholdTest() {
   const [testStarted, setTestStarted] = useState(false);

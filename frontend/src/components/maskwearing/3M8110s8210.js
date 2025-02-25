@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './maskwearing.css';
-import AutoVideoRecorder from '../../AudioVideoRecorder.js';
+import AutoVideoRecorder from '../AudioVideoRecorder.jsx';
 
 function ThreeMNormal() {
   const navigate = useNavigate();
