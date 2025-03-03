@@ -1,93 +1,118 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 function AutoVideoRecorder() {
+  const videoRef = useRef(null);
   const mediaRecorderRef = useRef(null);
-  const chunksRef = useRef([]);
-  const streamRef = useRef(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const timerRef = useRef(null);
 
+  // Start recording when component mounts
   useEffect(() => {
-    let mounted = true;
-
-    const startRecording = async () => {
-      try {
-        // Request access to the user's camera and microphone
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: true
-        });
-        
-        if (!mounted) {
-          stream.getTracks().forEach(track => track.stop());
-          return;
-        }
-
-        streamRef.current = stream;
-
-        // Create a new MediaRecorder instance
-        const mediaRecorder = new MediaRecorder(stream);
-        mediaRecorderRef.current = mediaRecorder;
-        chunksRef.current = [];
-
-        // Handle data available event
-        mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            chunksRef.current.push(event.data);
-          }
-        };
-
-        // Handle recording stop event
-        mediaRecorder.onstop = () => {
-          // Create a blob from the recorded chunks
-          const blob = new Blob(chunksRef.current, {
-            type: 'video/webm'
-          });
-
-          // Create a download link and trigger download
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `recording-${new Date().toISOString()}.webm`;
-          document.body.appendChild(a);
-          a.click();
-          
-          // Cleanup
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          
-          // Stop all tracks
-          stream.getTracks().forEach(track => track.stop());
-        };
-
-        // Start recording
-        mediaRecorder.start();
-        console.log('Recording started');
-
-      } catch (error) {
-        console.error('Error starting recording:', error);
-      }
-    };
-
-    // Start recording when component mounts
     startRecording();
-
-    // Cleanup function that runs when component unmounts
+    
+    // Clean up when component unmounts
     return () => {
-      mounted = false;
-      
-      // Stop recording if it's active
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-        mediaRecorderRef.current.stop();
-      }
-      
-      // Ensure we stop all tracks
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
+      stopRecording();
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
       }
     };
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
 
-  // This component doesn't need to render anything visible
-  return null;
+  const startTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    setRecordingSeconds(0);
+    timerRef.current = setInterval(() => {
+      setRecordingSeconds(prev => prev + 1);
+    }, 1000);
+  };
+
+  const startRecording = async () => {
+    setErrorMessage('');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: true, 
+        audio: true 
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      
+      const chunks = [];
+      
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunks.push(e.data);
+        }
+      };
+      
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        // Here you could upload the recording to your server
+        console.log('Recording stopped, blob size:', blob.size);
+      };
+      
+      mediaRecorder.start();
+      setIsRecording(true);
+      startTimer();
+      
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      setErrorMessage('Cannot access camera or microphone. Please check permissions.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      
+      // Stop all tracks in the stream
+      if (videoRef.current && videoRef.current.srcObject) {
+        const tracks = videoRef.current.srcObject.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+      
+      setIsRecording(false);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="video-recorder">
+      {errorMessage && <p className="error">{errorMessage}</p>}
+      
+      <video 
+        ref={videoRef} 
+        autoPlay 
+        playsInline 
+        muted 
+        className="video-preview"
+      />
+      
+      {isRecording && (
+        <div className="recording-indicator">
+          <span className="recording-dot"></span>
+          <span className="recording-time">{formatTime(recordingSeconds)}</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default AutoVideoRecorder;

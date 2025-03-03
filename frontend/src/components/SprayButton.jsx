@@ -1,80 +1,73 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { createAuthenticatedClient } from '../utils/authUtil';
 
-const SprayButton = ({ onSprayComplete, disabled }) => {
-    const [isSpraying, setIsSpraying] = useState(false);
-    const [error, setError] = useState(null);
-  
-    const handleSpray = async () => {
-      setIsSpraying(true);
-      setError(null);
-      try {
-        console.log('Sending spray request...');
-        const response = await fetch('http://localhost:5001/api/spray', { 
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        console.log('Received response:', response.status);
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Spray failed');
-        }
-        
-        const data = await response.json();
-        console.log('Response data:', data);
-        onSprayComplete(data.totalSprays);
-      } catch (error) {
-        console.error('Spray error:', error);
-        setError(error.message);
-      } finally {
-        setIsSpraying(false);
+function SprayButton({ onSprayComplete }) {
+  const [spraying, setSpraying] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSpray = async () => {
+    if (spraying) return;
+    
+    try {
+      setError('');
+      setSpraying(true);
+      
+      // Get authenticated API client
+      const api = await createAuthenticatedClient();
+      
+      // Send spray request to activate the Arduino motor
+      const response = await api.post('/api/spray');
+      
+      console.log('Spray response:', response.data);
+      
+      // Call the callback with the total sprays count
+      if (response.data.totalSprays && onSprayComplete) {
+        onSprayComplete(response.data.totalSprays);
+      } else if (response.data.error) {
+        throw new Error(response.data.error);
       }
-    };
-  
-    const handleStop = async () => {
-      try {
-        console.log('Sending stop request...');
-        const response = await fetch('http://localhost:5001/api/stop-spray', { 
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to stop spray');
-        }
-        
-        console.log('Stop request successful');
-      } catch (error) {
-        console.error('Stop error:', error);
-        setError(error.message);
-      }
-    };
-  
-    return (
-      <div className="spray-controls">
-        <button
+    } catch (error) {
+      console.error('Error during spray:', error);
+      setError('Failed to activate spray');
+    } finally {
+      setSpraying(false);
+    }
+  };
+
+  const handleStopSpray = async () => {
+    try {
+      // Get authenticated API client
+      const api = await createAuthenticatedClient();
+      
+      // Send stop spray request to the Arduino
+      await api.post('/api/stop-spray');
+    } catch (error) {
+      console.error('Error stopping spray:', error);
+    }
+  };
+
+  return (
+    <div className="spray-button-container">
+      {error && <p className="error">{error}</p>}
+      
+      {!spraying ? (
+        <button 
           onClick={handleSpray}
-          disabled={disabled || isSpraying}
-          className={`button spray-button ${disabled || isSpraying ? 'disabled' : ''}`}
+          className="button spray-button"
+          disabled={spraying}
         >
-          {isSpraying ? 'Spraying...' : 'Spray'}
+          Spray
         </button>
-        {isSpraying && (
-          <button
-            onClick={handleStop}
-            className="button stop-button"
-          >
-            Stop
-          </button>
-        )}
-        {error && <div className="error-message" style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
-      </div>
-    );
-};
+      ) : (
+        <button 
+          onClick={handleStopSpray}
+          className="button stop-button"
+        >
+          Stop Spray
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default SprayButton;

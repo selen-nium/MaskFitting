@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 const db = admin.firestore();
 const usersCollection = db.collection('users');
 
-// Authentication middleware to verify Firebase tokens
+
 const authenticateUser = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -57,21 +57,18 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
-// Login endpoint is no longer needed as Firebase handles authentication directly
-// But we'll keep a simple endpoint for backward compatibility or additional checks
+// Update login-check endpoint to use Firebase Auth UID:
 app.post('/api/login-check', authenticateUser, async (req, res) => {
   try {
-    // The user is already authenticated via the middleware
-    // We can perform additional checks if needed
+    // Get user profile from Firestore using the Firebase Auth UID
     const userDoc = await usersCollection.doc(req.user.uid).get();
     
     if (!userDoc.exists) {
       return res.status(404).json({ success: false, message: 'User profile not found' });
     }
     
-    // Return user data (excluding sensitive info)
+    // Return user data (no need to remove password as it's not stored in Firestore anymore)
     const userData = userDoc.data();
-    delete userData.password; // Remove password if stored
     
     res.json({ 
       success: true, 
@@ -84,9 +81,12 @@ app.post('/api/login-check', authenticateUser, async (req, res) => {
   }
 });
 
+// No other changes needed in your server.js as it already uses Firebase Auth tokens
+
 app.post('/api/submit-declaration', authenticateUser, async (req, res) => {
-  const { question1, question2, question3, question4, question5, question6 } = req.body;
+  
   const userId = req.user.uid;
+  const { question1, question2, question3, question4, question5, question6 } = req.body;
   
   try {
     // Check if the user exists

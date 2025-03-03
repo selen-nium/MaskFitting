@@ -1,0 +1,789 @@
+/* Global Styles for Mask Fitting Application */
+
+/* ===== Base Styles ===== */
+:root {
+  --primary-color: #1a237e;
+  --primary-light: #534bae;
+  --primary-dark: #000051;
+  --secondary-color: #e6f2ff;
+  --secondary-light: #ffffff;
+  --secondary-dark: #b3d9ff;
+  --text-on-primary: #ffffff;
+  --text-on-secondary: #1a237e;
+  --success-color: #4caf50;
+  --success-light: #e8f5e9;
+  --error-color: #f44336;
+  --error-light: #ffebee;
+  --warning-color: #ff9800;
+  --warning-light: #fff8e1;
+  --gray-light: #f5f5f5;
+  --gray-medium: #e0e0e0;
+  --box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  --border-radius: 10px;
+  --button-radius: 5px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f9f9f9;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+}
+
+a {
+  color: var(--primary-light);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Layout Containers ===== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.page-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.section {
+  margin-bottom: 30px;
+  padding: 20px;
+  border-radius: var(--border-radius);
+  background-color: white;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 16px;
+  text-align: center;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--text-on-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-light);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-on-secondary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--secondary-dark);
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #45a049;
+}
+
+.btn-danger {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #d32f2f;
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+/* ===== Forms ===== */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: var(--primary-dark);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--gray-medium);
+  border-radius: var(--button-radius);
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary-light);
+  outline: none;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.form-check input[type="checkbox"],
+.form-check input[type="radio"] {
+  margin-right: 10px;
+  width: auto;
+}
+
+/* ===== Login & Account Pages ===== */
+.login-container,
+.create-account-container {
+  display: flex;
+  max-width: 900px;
+  margin: 50px auto;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+.image-container {
+  flex: 1;
+  background-color: var(--primary-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 400px;
+}
+
+.form-container {
+  flex: 1;
+  padding: 40px;
+  background-color: white;
+}
+
+.login-message {
+  text-align: center;
+  padding: 20px;
+  background-color: var(--error-light);
+  border-radius: var(--border-radius);
+  margin: 20px auto;
+  max-width: 600px;
+  color: var(--error-color);
+}
+
+/* ===== Declaration Page ===== */
+.declaration-container {
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.question-container {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--gray-medium);
+}
+
+.question-text {
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.custom-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-color);
+  display: inline-block;
+  margin-right: 10px;
+  position: relative;
+}
+
+input[type="radio"]:checked + .custom-radio:after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ===== Test Selection Page ===== */
+.test-selection-container {
+  max-width: 600px;
+  margin: 50px auto;
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 40px;
+  box-shadow: var(--box-shadow);
+  text-align: center;
+}
+
+.test-selection-heading {
+  color: var(--primary-color);
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+.test-selection-button {
+  width: 100%;
+  padding: 15px;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  border: none;
+  border-radius: var(--button-radius);
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 20px;
+}
+
+.test-selection-button:hover {
+  background-color: var(--secondary-dark);
+}
+
+.test-description {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+/* ===== Threshold Test Page ===== */
+.threshold-test-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.video-placeholder {
+  width: 100%;
+  height: 300px;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  margin: 20px 0;
+  border-radius: 5px;
+}
+
+.spray-count {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 20px 0;
+  text-align: center;
+  color: var(--primary-color);
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: var(--button-radius);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.start-button {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.start-button:hover {
+  background-color: var(--primary-light);
+}
+
+.spray-button {
+  background-color: var(--primary-light);
+  color: white;
+  min-width: 120px;
+}
+
+.stop-button {
+  background-color: var(--error-color);
+  color: white;
+  min-width: 120px;
+}
+
+.complete-button {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.complete-button:hover {
+  background-color: #45a049;
+}
+
+/* ===== End of Threshold Test Page ===== */
+.end-threshold-container {
+  max-width: 600px;
+  margin: 50px auto;
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 40px;
+  box-shadow: var(--box-shadow);
+  text-align: center;
+}
+
+.end-threshold-heading {
+  color: var(--primary-color);
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+.threshold-text {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.threshold-result {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-top: 30px;
+}
+
+/* ===== Mask Fit Test Page ===== */
+.mask-fit-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.note {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+/* ===== Mask Wearing Page ===== */
+.mask-wearing-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.video-container {
+  margin: 20px 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.instructions {
+  background-color: var(--warning-light);
+  padding: 15px;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* ===== Actual Mask Fit Test Page ===== */
+.mask-fit-test-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.test-info {
+  background-color: var(--gray-light);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.current-exercise {
+  background-color: var(--secondary-color);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.timer {
+  margin: 15px 0;
+}
+
+.progress-bar {
+  height: 20px;
+  background-color: var(--gray-medium);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.progress {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 1s linear;
+}
+
+.exercise-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.spray-controls {
+  background-color: var(--warning-light);
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.fail-button {
+  min-width: 200px;
+}
+
+/* ===== Test Results Page ===== */
+.test-results-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: var(--gray-light);
+  border-radius: 5px;
+}
+
+.result-buttons {
+  margin: 30px 0;
+}
+
+.result-buttons p {
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.pass-button {
+  background-color: var(--success-color);
+  color: white;
+  padding: 15px 40px;
+}
+
+.fail-button {
+  background-color: var(--error-color);
+  color: white;
+  padding: 15px 40px;
+}
+
+.result-message {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.result-message.pass {
+  background-color: var(--success-light);
+  color: var(--success-color);
+}
+
+.result-message.fail {
+  background-color: var(--error-light);
+  color: var(--error-color);
+}
+
+/* ===== Test Complete Page ===== */
+.test-complete-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+}
+
+.result-summary {
+  margin: 30px 0;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.result-summary.pass {
+  background-color: var(--success-light);
+  border: 2px solid var(--success-color);
+}
+
+.result-summary.fail {
+  background-color: var(--error-light);
+  border: 2px solid var(--error-color);
+}
+
+/* ===== Dashboard Page ===== */
+.dashboard-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.user-profile {
+  margin-top: 20px;
+}
+
+.threshold-test-status,
+.test-status {
+  background-color: var(--gray-light);
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.valid {
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.expired {
+  color: var(--error-color);
+  font-weight: bold;
+}
+
+/* ===== Video Recorder ===== */
+.video-recorder {
+  margin: 20px 0;
+  position: relative;
+}
+
+.video-preview {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--gray-medium);
+}
+
+.recording-indicator {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px 10px;
+  border-radius: 15px;
+  color: white;
+}
+
+.recording-dot {
+  width: 12px;
+  height: 12px;
+  background-color: var(--error-color);
+  border-radius: 50%;
+  margin-right: 5px;
+  animation: pulse 1.5s infinite;
+}
+
+.recording-time {
+  font-size: 14px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ===== Utility Classes ===== */
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: 10px; }
+.mt-2 { margin-top: 20px; }
+.mt-3 { margin-top: 30px; }
+.mb-1 { margin-bottom: 10px; }
+.mb-2 { margin-bottom: 20px; }
+.mb-3 { margin-bottom: 30px; }
+
+.error {
+  color: var(--error-color);
+  margin: 10px 0;
+}
+
+.success {
+  color: var(--success-color);
+  margin: 10px 0;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* ===== Development Mode Styles ===== */
+.dev-mode-controls {
+  background-color: #e3f2fd;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  border: 1px dashed #2196f3;
+}
+
+/* ===== Responsive Styles ===== */
+@media (max-width: 768px) {
+  .login-container,
+  .create-account-container {
+    flex-direction: column;
+  }
+  
+  .image-container {
+    display: none;
+  }
+  
+  .form-container {
+    padding: 20px;
+  }
+  
+  .page-container {
+    margin: 20px;
+    padding: 20px;
+  }
+  
+  .button-container,
+  .action-buttons,
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .test-info {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+  
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 18px; }
+  
+  .radio-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
