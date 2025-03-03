@@ -51,7 +51,7 @@ function Declaration() {
       const api = await createAuthenticatedClient();
       
       // Submit declaration
-      const response = await api.post('/submit-declaration', answers);
+      const response = await api.post('/api/submit-declaration', answers);
       
       if (response.data.success) {
         navigate('/test-selection');
@@ -120,7 +120,7 @@ function Declaration() {
         ))}
         
         <div className="text-center mt-3">
-          <button type="submit" className="btn btn-primary btn-block">
+          <button type="submit" className="btn btn-primary btn-block" onClick={handleSubmit}>
             Submit
           </button>
         </div>

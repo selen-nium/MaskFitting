@@ -12,7 +12,6 @@ function ThresholdTest() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [isUnlocked, setIsUnlocked] = useState(false);
   const [spraying, setSpraying] = useState(false);
   const [devMode, setDevMode] = useState(process.env.NODE_ENV === 'development');
   
@@ -30,43 +29,37 @@ function ThresholdTest() {
       setLoading(false);
     });
     
-    // Clean up subscription
-    return () => unsubscribe();
-  }, [navigate]);
+    // Clean up subscription and reset spray count when component unmounts
+    return () => {
+      unsubscribe();
+      // Send RESET command when leaving the page
+      if (!devMode) {
+        resetSprayCount();
+      }
+    };
+  }, [navigate, devMode]);
 
-  // Handle unlocking the device
-  const handleUnlock = async () => {
-    // In development mode, just simulate unlock
+  // Function to reset spray count on Arduino
+  const resetSprayCount = async () => {
     if (devMode) {
-      setIsUnlocked(true);
+      console.log('DEV MODE: Simulating spray count reset');
+      setSprayCount(0);
       return;
     }
     
     try {
-      setError('');
-      
-      // Get authenticated API client
       const api = await createAuthenticatedClient();
-      
-      // Send unlock request
-      const response = await api.post('/api/unlock');
-      
-      if (response.data.message === 'UNLOCKED') {
-        setIsUnlocked(true);
-      } else {
-        setError('Failed to unlock device');
-      }
+      console.log('Sending RESET command to Arduino...');
+      await api.post('/api/reset-spray');
+      console.log('Spray count reset successfully');
+      setSprayCount(0);
     } catch (error) {
-      console.error('Error unlocking device:', error);
-      setError('Error communicating with the device');
+      console.error('Error resetting spray count:', error);
     }
   };
 
-  // Start the test
-  const startTest = async () => {
-    if (!isUnlocked) {
-      await handleUnlock();
-    }
+  // Start the test - no unlock, just start directly
+  const startTest = () => {
     setTestStarted(true);
   };
 
@@ -87,20 +80,28 @@ function ThresholdTest() {
       // Get authenticated API client
       const api = await createAuthenticatedClient();
       
+      console.log('Sending spray request...');
       // Send spray request to activate the Arduino motor
       const response = await api.post('/api/spray');
       
       console.log('Spray response:', response.data);
       
       // Update spray count based on response from Arduino
-      if (response.data.totalSprays) {
+      if (response.data.totalSprays !== undefined) {
+        console.log('Setting spray count to:', response.data.totalSprays);
         setSprayCount(response.data.totalSprays);
-      } else if (response.data.error) {
-        throw new Error(response.data.error);
+      } else {
+        // If no spray count received, increment manually
+        console.log('No spray count in response, incrementing manually');
+        setSprayCount(prev => prev + 1);
       }
     } catch (error) {
       console.error('Error during spray:', error);
       setError('Failed to activate spray: ' + (error.message || 'Unknown error'));
+      
+      // Even if there's an error, increment spray count to allow tests to continue
+      console.log('Error occurred, incrementing spray count manually');
+      setSprayCount(prev => prev + 1);
     } finally {
       setSpraying(false);
     }
@@ -108,15 +109,20 @@ function ThresholdTest() {
 
   // Handle stopping the spray
   const handleStopSpray = async () => {
-    // In development mode, no need to do anything
+    // In development mode, no need to do anything for stop
     if (devMode) return;
     
     try {
       // Get authenticated API client
       const api = await createAuthenticatedClient();
       
+      console.log('Sending stop spray request...');
       // Send stop spray request
       await api.post('/api/stop-spray');
+      
+      console.log('Sending RESET command after stopping spray...');
+      // Send RESET command after stopping
+      await resetSprayCount();
     } catch (error) {
       console.error('Error stopping spray:', error);
     }
@@ -125,12 +131,6 @@ function ThresholdTest() {
   // Complete the test and save result
   const completeTest = async () => {
     try {
-      // Lock the device (except in dev mode)
-      if (!devMode) {
-        const api = await createAuthenticatedClient();
-        await api.post('/api/lock');
-      }
-      
       // Calculate group based on spray count
       let group = 0;
       if (sprayCount >= 1 && sprayCount <= 10) group = 1;
@@ -147,6 +147,10 @@ function ThresholdTest() {
           }
         });
       }
+      
+      // Send RESET command before navigating away
+      console.log('Sending RESET command before completing test...');
+      await resetSprayCount();
       
       // Navigate to results page
       navigate('/end-of-threshold-test', { state: { sprayCount } });
@@ -204,7 +208,7 @@ function ThresholdTest() {
             className="btn btn-primary"
             disabled={loading}
           >
-            {isUnlocked ? 'Start Test' : 'Unlock and Start Test'}
+            Start Test
           </button>
         </div>
       ) : (

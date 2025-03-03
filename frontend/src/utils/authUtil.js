@@ -3,7 +3,7 @@ import axios from 'axios';
 import { auth } from '../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
-const API_BASE_URL = 'http://localhost:5001/api';
+const API_BASE_URL = 'http://localhost:5001';
 
 /**
  * Creates an authenticated API client

@@ -44,10 +44,10 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           
           {/* Redirect to Dashboard by default */}
-          <Route path="/" element={<Navigate to="/dashboard" />} />
+          <Route path="/" element={<Navigate to="/login" />} />
           
           {/* 404 - Redirect to Dashboard */}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </div>
     </Router>

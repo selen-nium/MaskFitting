@@ -123,69 +123,71 @@ app.post('/api/submit-declaration', authenticateUser, async (req, res) => {
 // Spray routes
 app.post('/api/spray', authenticateUser, (req, res) => {
   console.log('Spray endpoint hit');
+  
+  if (!serialPort.isOpen) {
+    console.error('Serial port is not open');
+    return res.status(500).json({ error: 'Serial port is not connected' });
+  }
+  
   let dataBuffer = '';
-  let responseReceived = false;
   let responseTimeout;
-
-  // Calculate timeout: 5 sprays × (3000ms spray time + 3000ms return time) + 5000ms buffer
-  const TIMEOUT_DURATION = (5 * 6000) + 5000; // 35 seconds total
-
-  const sendResponse = (responseData) => {
+  let responseReceived = false;
+  
+  // Function to handle Arduino data
+  const handleArduinoData = (data) => {
+    const dataStr = data.toString();
+    console.log('Data from Arduino:', dataStr);
+    dataBuffer += dataStr;
+    
+    // Look for a number pattern in the response (e.g., "Sprays: 3" or just "3")
+    const sprayCountMatch = dataBuffer.match(/(?:Sprays?:?\s*)?(\d+)/i);
+    
+    if (sprayCountMatch) {
+      const sprayCount = parseInt(sprayCountMatch[1]);
+      console.log('Found spray count in Arduino response:', sprayCount);
+      
+      // Send the response with the spray count
+      if (!responseReceived) {
+        responseReceived = true;
+        clearTimeout(responseTimeout);
+        parser.removeListener('data', handleArduinoData);
+        res.json({ totalSprays: sprayCount });
+      }
+    }
+  };
+  
+  // Set timeout for Arduino response
+  responseTimeout = setTimeout(() => {
     if (!responseReceived) {
       responseReceived = true;
-      clearTimeout(responseTimeout);
-      parser.removeListener('data', handleArduinoResponse);
-      res.json(responseData);
+      parser.removeListener('data', handleArduinoData);
+      console.log('Timeout waiting for spray count, returning success anyway');
+      res.json({ message: 'SPRAY command sent, but no count received' });
     }
-  };
-
-  const handleArduinoResponse = (data) => {
-    if (responseReceived) return;
-    
-    console.log('Raw data from Arduino:', data);
-    dataBuffer += data.toString();
-    console.log('Current buffer:', dataBuffer);
-
-    // Check for spray count in the accumulated data
-    const match = dataBuffer.match(/Total Sprays Completed: (\d+)/);
-    if (match) {
-      const sprayCount = parseInt(match[1]);
-      console.log('Found spray count:', sprayCount);
-      
-      const wasStopped = dataBuffer.includes('Spraying stopped!');
-      console.log('Was stopped:', wasStopped);
-
-      sendResponse({ 
-        message: wasStopped ? 'Spray stopped' : 'Spray completed',
-        totalSprays: sprayCount
-      });
-    }
-  };
-
-  // Set up timeout handler
-  responseTimeout = setTimeout(() => {
-    console.log('Timeout reached. Current buffer:', dataBuffer);
-    sendResponse({ error: 'Timeout waiting for Arduino response' });
-  }, TIMEOUT_DURATION);
-
-  // Attach the data listener before sending the command
-  parser.on('data', handleArduinoResponse);
-
+  }, 10000); // 10 second timeout
+  
+  // Attach the data listener
+  parser.on('data', handleArduinoData);
+  
   // Send the spray command
   serialPort.write('SPRAY\n', (err) => {
     if (err) {
       console.error('Error on write: ', err.message);
-      sendResponse({ error: 'Failed to initiate spray' });
-    } else {
-      console.log('Spray command sent to Arduino');
+      responseReceived = true;
+      clearTimeout(responseTimeout);
+      parser.removeListener('data', handleArduinoData);
+      return res.status(500).json({ error: 'Failed to send SPRAY command' });
     }
+    console.log('SPRAY command sent to Arduino');
+    
+    // We don't immediately return - we wait for the Arduino to respond with the count
   });
-
+  
   // Clean up on response finish
   res.on('finish', () => {
     if (!responseReceived) {
-      parser.removeListener('data', handleArduinoResponse);
       clearTimeout(responseTimeout);
+      parser.removeListener('data', handleArduinoData);
     }
   });
 });
@@ -198,6 +200,25 @@ app.post('/api/stop-spray', authenticateUser, (req, res) => {
     }
     console.log('Stop command sent');
     res.json({ message: 'Stop command sent successfully' });
+  });
+});
+
+app.post('/api/reset-spray', authenticateUser, (req, res) => {
+  console.log('Reset spray endpoint hit');
+  
+  if (!serialPort.isOpen) {
+    console.error('Serial port is not open');
+    return res.status(500).json({ error: 'Serial port is not connected' });
+  }
+  
+  // Send the RESET command to Arduino
+  serialPort.write('RESET\n', (err) => {
+    if (err) {
+      console.error('Error on write: ', err.message);
+      return res.status(500).json({ error: 'Failed to reset spray count' });
+    }
+    console.log('RESET command sent to Arduino');
+    res.json({ message: 'Spray count reset successfully' });
   });
 });
 
@@ -255,6 +276,80 @@ app.post('/api/lock', authenticateUser, (req, res) => {
       res.json({ message: 'Successfully locked' });
     } else {
       res.status(500).json({ error: 'Unexpected response from Arduino' });
+    }
+  });
+});
+
+// Add this to your server.js file
+
+// List all available serial ports
+app.get('/api/serial-ports', authenticateUser, async (req, res) => {
+  try {
+    const ports = await SerialPort.list();
+    res.json({ 
+      ports: ports.map(port => ({
+        path: port.path,
+        manufacturer: port.manufacturer,
+        serialNumber: port.serialNumber,
+        pnpId: port.pnpId,
+        vendorId: port.vendorId,
+        productId: port.productId
+      })),
+      currentPort: portPath,
+      isOpen: serialPort.isOpen
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Test serial connection
+app.post('/api/test-serial', authenticateUser, (req, res) => {
+  if (!serialPort.isOpen) {
+    return res.status(500).json({ error: 'Serial port is not open' });
+  }
+  
+  let testTimeout;
+  let responseReceived = false;
+  
+  // Function to clean up and send response
+  const cleanup = (response) => {
+    if (!responseReceived) {
+      responseReceived = true;
+      clearTimeout(testTimeout);
+      parser.removeListener('data', handleTestResponse);
+      res.json(response);
+    }
+  };
+  
+  // Handler for Arduino response
+  const handleTestResponse = (data) => {
+    console.log('Test response received:', data.toString());
+    cleanup({ 
+      success: true, 
+      message: 'Arduino responded', 
+      response: data.toString() 
+    });
+  };
+  
+  // Set up timeout
+  testTimeout = setTimeout(() => {
+    console.log('Serial test timeout reached');
+    cleanup({ success: false, error: 'No response from Arduino' });
+  }, 5000);
+  
+  // Attach listener
+  parser.once('data', handleTestResponse);
+  
+  // Send a test command
+  console.log('Sending test command to Arduino');
+  serialPort.write('TEST\n', (err) => {
+    if (err) {
+      console.error('Error sending test command:', err);
+      cleanup({ success: false, error: `Failed to send command: ${err.message}` });
+    } else {
+      console.log('Test command sent successfully');
+      // Response will be handled by the listener
     }
   });
 });

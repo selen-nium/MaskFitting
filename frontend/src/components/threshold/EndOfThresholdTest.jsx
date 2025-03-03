@@ -72,7 +72,7 @@ function EndOfThresholdTest() {
       <p className="threshold-result">You are in Group: {group}</p>
       
       <p className="threshold-text">
-        This result has been saved to your profile. You can now proceed to the Mask Fit Test.
+        This result has been saved to your profile. Please wait 10-15 minutes before proceeding with the Mask Fit Test.
       </p>
       
       <div className="action-buttons">

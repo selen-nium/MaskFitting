@@ -54,11 +54,17 @@ function ActualMaskFitTest() {
       setError('Missing test information. Please restart the test.');
     }
     
-    // Clean up subscription
-    return () => unsubscribe();
-  }, [navigate, maskModel, group]);
+    // Clean up subscription and reset spray count when component unmounts
+    return () => {
+      unsubscribe();
+      // Reset spray count on unmount
+      if (!devMode) {
+        resetSprayCount();
+      }
+    };
+  }, [navigate, maskModel, group, devMode]);
 
-  // Handle exercise timer
+  // Add timer effect to handle countdown
   useEffect(() => {
     let interval = null;
     
@@ -67,14 +73,34 @@ function ActualMaskFitTest() {
         setTimer(prevTimer => prevTimer - 1);
       }, 1000);
     } else if (timerActive && timer === 0) {
-      // Exercise is complete, move to next one
+      // Time is up for current exercise
+      setTimerActive(false);
       handleNextExercise();
+    } else if (!timerActive && interval) {
+      clearInterval(interval);
     }
     
     return () => {
       if (interval) clearInterval(interval);
     };
   }, [timerActive, timer]);
+
+  // Function to reset spray count
+  const resetSprayCount = async () => {
+    if (devMode) {
+      console.log('DEV MODE: Simulating spray count reset');
+      return;
+    }
+    
+    try {
+      const api = await createAuthenticatedClient();
+      console.log('Sending RESET command to Arduino...');
+      await api.post('/api/reset-spray');
+      console.log('Spray count reset successfully');
+    } catch (error) {
+      console.error('Error resetting spray count:', error);
+    }
+  };
 
   // Start the exercise
   const startExercise = () => {
@@ -150,6 +176,9 @@ function ActualMaskFitTest() {
       
       // Send stop spray request
       await api.post('/api/stop-spray');
+      
+      // Reset spray count after stopping
+      await resetSprayCount();
     } catch (error) {
       console.error('Error stopping spray:', error);
     }
@@ -162,12 +191,9 @@ function ActualMaskFitTest() {
     setTestPassed(false);
     
     try {
-      // Lock the device in non-dev mode
-      if (!devMode) {
-        const api = await createAuthenticatedClient();
-        await api.post('/api/lock');
-      }
-      
+      // Reset spray count before completing test
+      await resetSprayCount();
+
       // Update user document with test results
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
@@ -190,11 +216,8 @@ function ActualMaskFitTest() {
     setTestPassed(true);
     
     try {
-      // Lock the device in non-dev mode
-      if (!devMode) {
-        const api = await createAuthenticatedClient();
-        await api.post('/api/lock');
-      }
+      // Reset spray count before completing test
+      await resetSprayCount();
       
       // Update user document with successful test results
       if (user) {

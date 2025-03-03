@@ -8,7 +8,6 @@ import { createAuthenticatedClient } from '../../utils/authUtil';
 function MaskFitTest() {
   const [group, setGroup] = useState('');
   const [maskModel, setMaskModel] = useState('');
-  const [isUnlocked, setIsUnlocked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
@@ -49,48 +48,6 @@ function MaskFitTest() {
     return () => unsubscribe();
   }, [navigate]);
 
-  const handleUnlock = async () => {
-    if (!user) {
-      setError('You must be logged in to continue');
-      navigate('/login');
-      return;
-    }
-
-    if (!thresholdTestData && !devMode) {
-      setError('You must complete the Threshold Test first');
-      navigate('/test-selection');
-      return;
-    }
-
-    // In development mode, just simulate unlock
-    if (devMode) {
-      setIsUnlocked(true);
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-
-    try {
-      // Get authenticated API client
-      const api = await createAuthenticatedClient();
-      
-      // Send unlock request
-      const response = await api.post('/api/unlock');
-      
-      if (response.data.message === 'UNLOCKED') {
-        setIsUnlocked(true);
-      } else {
-        setError('Failed to unlock. Please try again.');
-      }
-    } catch (error) {
-      console.error('Unlock error:', error);
-      setError('Error unlocking device. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async () => {
     if (!user) {
       setError('You must be logged in to continue');
@@ -117,15 +74,6 @@ function MaskFitTest() {
       await updateDoc(doc(db, "users", user.uid), {
         maskModel: maskModel
       });
-
-      // In development mode, skip lock request
-      if (!devMode) {
-        // Get authenticated API client for lock request
-        const api = await createAuthenticatedClient();
-        
-        // Send lock request
-        await api.post('/api/lock');
-      }
 
       // Get the navigation path based on mask model
       let maskWearingPath;
@@ -243,23 +191,13 @@ function MaskFitTest() {
       </div>
       
       <div className="text-center mt-3">
-        {!isUnlocked ? (
-          <button
-            onClick={handleUnlock}
-            disabled={loading}
-            className="btn btn-primary"
-          >
-            {loading ? 'Processing...' : (devMode ? 'Simulate Unlock' : 'Unlock to Continue')}
-          </button>
-        ) : (
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="btn btn-primary"
-          >
-            {loading ? 'Processing...' : 'Continue'}
-          </button>
-        )}
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="btn btn-primary"
+        >
+          {loading ? 'Processing...' : 'Continue'}
+        </button>
       </div>
     </div>
   );
