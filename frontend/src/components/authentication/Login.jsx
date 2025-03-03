@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from '../../firebase';
 import doctorsImage from '../../assets/images/doctor.png';
 
@@ -9,6 +9,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [verificationSent, setVerificationSent] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -18,6 +19,7 @@ function Login() {
     setLoading(true);
     setError('');
     setVerificationSent(false);
+    setResetSent(false);
 
     try {
       console.log("Attempting login with email:", email);
@@ -87,6 +89,35 @@ function Login() {
     navigate('/create-account');
   };
 
+  const handlePasswordReset = async () => {
+    if (!email) {
+      setError('Please enter your email address to reset password');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResetSent(false);
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      console.log("Password reset email sent to:", email);
+      setResetSent(true);
+    } catch (error) {
+      console.error('Password reset error:', error);
+      
+      if (error.code === 'auth/user-not-found') {
+        setError('No account found with this email address');
+      } else if (error.code === 'auth/invalid-email') {
+        setError('Invalid email format');
+      } else {
+        setError('Failed to send password reset email. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-container">
       <div className="image-container">
@@ -127,13 +158,25 @@ function Login() {
         {verificationSent && (
           <p className="success">Verification email has been resent. Please check your inbox.</p>
         )}
-        <button
-          onClick={handleCreateAccount}
-          className="btn btn-secondary btn-block mt-2"
-          disabled={loading}
-        >
-          Create Account
-        </button>
+        {resetSent && (
+          <p className="success">Password reset email has been sent. Please check your inbox.</p>
+        )}
+        <div className="action-buttons">
+          <button
+            onClick={handleCreateAccount}
+            className="btn btn-secondary btn-block mt-2"
+            disabled={loading}
+          >
+            Create Account
+          </button>
+          <button
+            onClick={handlePasswordReset}
+            className="btn btn-link mt-2"
+            disabled={loading}
+          >
+            Forgot Password?
+          </button>
+        </div>
       </div>
     </div>
   );
