@@ -5,9 +5,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import './styles/styles.css';
 
 // Import components
-import Login from './components/authentification/Login';
-import CreateAccount from './components/authentification/CreateAccount';
-import Declaration from './components/authentification/Declaration'
+import Login from './components/authentication/Login';
+import CreateAccount from './components/authentication/CreateAccount';
+import Declaration from './components/authentication/Declaration'
 import TestSelection from './components/TestSelection'
 import ThresholdTest from './components/threshold/ThresholdTest'
 import EndOfThresholdTest from './components/threshold/EndOfThresholdTest';
