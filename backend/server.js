@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 // SerialPort setup
-const portPath = '/dev/cu.usbserial-110'; // this is for selen's mac
+const portPath = '/dev/cu.usbserial-130'; // this is for selen's mac
 const serialPort = new SerialPort({ path: portPath, baudRate: 9600 }, (err) => {
   if (err) {
     return console.error('Error opening serial port:', err);
