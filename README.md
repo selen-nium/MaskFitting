@@ -61,3 +61,12 @@ const videoSources = {
 ```
 
 2. Videos for Exercises (kiv)
+
+
+## Moving on
+1. Change to actual database (the firebaseAdmin.json file in backend config is not pushed to git for security reasons)
+
+2. UIUX fixes
+
+3. Connect to NTU email system for verification/password resets
+
