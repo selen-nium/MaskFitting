@@ -7,7 +7,7 @@ A web-based application designed for hospitals to manage and track mask fittings
 ## Technologies Used
 - Frontend: React.js
 - Backend: Express.js
-- Database: Not implemented yet (consider MongoDB or PostgreSQL)
+- Database and Authentication: Firebase
 
 ## Installation
 
@@ -21,6 +21,12 @@ A web-based application designed for hospitals to manage and track mask fittings
 git clone https://github.com/your-username/mask-fitting-system.git
 cd mask-fitting-system
 ```
+or 
+click the green code button
+click SSH
+copy the link
+clone it in your IDE
+
 2. Install backend dependencies
 ```
 cd backend
@@ -33,11 +39,25 @@ npm install
 ```
 4. Start backend server
 ```
-cd backend
+cd ../backend
 npm start
 ```
 5. Start frontend server
 ```
-cd frontend
+cd ../frontend
 npm start
 ```
+
+
+## Resources to be acquired
+1.  Mask wearing videos (in frontend/src/components/maskwearing/MaskWearing.jsx)
+```
+const videoSources = {
+    '3m-8110s-8210': '/videos/3m-8110s-8210-instructions.mp4',
+    '3m-1870-plus': '/videos/3m-1870-plus-instructions.mp4',
+    'air-plus': '/videos/air-plus-instructions.mp4',
+    'halyard': '/videos/halyard-instructions.mp4'
+};
+```
+
+2. Videos for Exercises (kiv)
