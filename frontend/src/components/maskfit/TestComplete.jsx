@@ -2,14 +2,16 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
+import Lottie from 'lottie-react';
+import confettiAnimation from '../../animations/confetti.json'; // adjust path as needed
 
 function TestComplete() {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   // Get the test result data from navigation state
   const { passed, maskModel } = location.state || {};
-  
+
   useEffect(() => {
     // Check if user is authenticated
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -17,7 +19,7 @@ function TestComplete() {
         navigate('/login');
       }
     });
-    
+
     // Clean up subscription
     return () => unsubscribe();
   }, [navigate]);
@@ -43,10 +45,29 @@ function TestComplete() {
   return (
     <div className="test-complete-container">
       <h2>Test Complete</h2>
-      
+
+      {/* Show animation if passed */}
+      {passed && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            display: 'flex',
+            width: '100vw',
+            height: '100vh',
+            zIndex: 9999,
+            pointerEvents: 'none',
+          }}
+        >
+          <Lottie animationData={confettiAnimation} loop={false} />
+        </div>
+      )}
+
+
       <div className={`result-summary ${passed ? 'pass' : 'fail'}`}>
         <h3>{passed ? 'Congratulations!' : 'Test Failed'}</h3>
-        
+
         {passed ? (
           <div>
             <p>You have successfully passed the mask fit test with the {maskModel} mask.</p>
@@ -60,7 +81,7 @@ function TestComplete() {
           </div>
         )}
       </div>
-      
+
       <div className="action-buttons">
         <button
           onClick={() => navigate('/mask-fit-test')}
@@ -68,7 +89,7 @@ function TestComplete() {
         >
           Start New Test
         </button>
-        
+
         <button
           onClick={() => navigate('/dashboard')}
           className="btn btn-primary"

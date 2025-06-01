@@ -330,7 +330,7 @@ input[type="radio"]:checked + .custom-radio:after {
 .video-placeholder {
   width: 100%;
   height: 300px;
-  background-color: #000;
+  background-color: #FFF;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -731,6 +731,37 @@ input[type="radio"]:checked + .custom-radio:after {
   justify-content: center;
   align-items: center;
   min-height: 200px;
+}
+
+/* ending confetti animation */
+.test-complete-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.result-summary.pass {
+  color: green;
+}
+
+.result-summary.fail {
+  color: red;
+}
+
+.action-buttons {
+  margin-top: 2rem;
+}
+
+.action-buttons button {
+  margin: 0 0.5rem;
+}
+
+.animation-container {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ===== Development Mode Styles ===== */

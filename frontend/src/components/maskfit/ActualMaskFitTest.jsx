@@ -273,7 +273,7 @@ function ActualMaskFitTest() {
       <div className="mask-fit-test-container">
         <h2>Mask Fit Test Complete</h2>
         
-        <div className={`result-message ${testPassed ? 'success' : 'failure'}`}>
+        {/* <div className={`result-message ${testPassed ? 'success' : 'failure'}`}>
           <h3>{testPassed ? 'Congratulations! Test Passed' : 'Test Failed'}</h3>
           
           {testPassed ? (
@@ -283,14 +283,14 @@ function ActualMaskFitTest() {
             <p>You have detected the test solution, which means the {maskModel} mask does not provide 
                a proper seal. Please try again with a different mask model.</p>
           )}
-        </div>
+        </div> */}
         
         <div className="text-center mt-3">
           <button 
             onClick={handleNavigateToResults}
             className="btn btn-primary"
           >
-            Continue
+            See results
           </button>
         </div>
       </div>
@@ -356,7 +356,7 @@ function ActualMaskFitTest() {
             </button>
           )}
           
-          {exercisesCompleted > 0 && (
+          {exercisesCompleted >= 0 && (
             <button 
               onClick={handleNextExercise}
               className="btn btn-secondary"
