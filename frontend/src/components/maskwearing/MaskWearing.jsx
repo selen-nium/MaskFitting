@@ -22,15 +22,15 @@ function MaskWearing() {
   
   // Video sources for different mask types
   const videoSources = {
-    '3m-8110s-8210': '/videos/3m-8110s-8210-instructions.mp4',
-    '3m-1870-plus': '/videos/3m-1870-plus-instructions.mp4',
-    'air-plus': '/videos/air-plus-instructions.mp4',
-    'halyard': '/videos/halyard-instructions.mp4'
+    '3m-8110s-8210': '/videos/maskfitTestPrep.mp4',
+    '3m-1870-plus': '/videos/maskfitTestPrep.mp4',
+    'air-plus': '/videos/maskfitTestPrep.mp4',
+    'halyard': '/videos/maskfitTestPrep.mp4',
   };
 
   // Check authentication and setup video
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
       } else {

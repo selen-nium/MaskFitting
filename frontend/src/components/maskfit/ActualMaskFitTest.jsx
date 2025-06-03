@@ -4,6 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import { createAuthenticatedClient } from '../../utils/authUtil';
+import './ActualMaskFitTest.css';
 
 function ActualMaskFitTest() {
   const [user, setUser] = useState(null);
@@ -18,208 +19,185 @@ function ActualMaskFitTest() {
   
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // Get mask model and group from navigation state
   const { maskModel, group } = location.state || {};
   
-  // Exercise procedure steps
+  // ─── Updated Exercise List with videoSrc ───
   const exercises = [
-    { name: "Normal Breathing", duration: 60, description: "Breathe normally for 60 seconds" },
-    { name: "Deep Breathing", duration: 60, description: "Take deep breaths for 60 seconds" },
-    { name: "Head Side to Side", duration: 60, description: "Turn head from side to side for 60 seconds" },
-    { name: "Head Up and Down", duration: 60, description: "Tilt head up and down for 60 seconds" },
-    { name: "Talking", duration: 60, description: "Read a passage out loud for 60 seconds" },
-    { name: "Bending", duration: 60, description: "Bend at waist as if touching toes for 60 seconds" },
-    { name: "Normal Breathing Again", duration: 60, description: "Breathe normally for 60 seconds" }
+    {
+      name: "Normal Breathing",
+      duration: 60,
+      description: "Breathe normally for 60 seconds",
+      videoSrc: "/videos/normalBreathing.mp4",
+    },
+    {
+      name: "Deep Breathing",
+      duration: 60,
+      description: "Take deep breaths for 60 seconds",
+      videoSrc: "/videos/deepBreathing.mp4",
+    },
+    {
+      name: "Head Side to Side",
+      duration: 60,
+      description: "Turn head from side to side for 60 seconds",
+      videoSrc: "/videos/turnHead.mp4",
+    },
+    {
+      name: "Head Up and Down",
+      duration: 60,
+      description: "Tilt head up and down for 60 seconds",
+      videoSrc: "/videos/moveHeadUp.mp4",
+    },
+    {
+      name: "Talking",
+      duration: 60,
+      description: "Read a passage out loud for 60 seconds",
+      videoSrc: "/videos/count.mp4",
+    },
+    {
+      name: "Bending",
+      duration: 60,
+      description: "Bend at waist as if touching toes for 60 seconds",
+      videoSrc: "/videos/bend.mp4",
+    },
+    {
+      name: "Normal Breathing Again",
+      duration: 60,
+      description: "Breathe normally for 60 seconds",
+      videoSrc: "/videos/finalNormalBreathing.mp4",
+    },
   ];
   
-  // Initialize timer state
   const [timer, setTimer] = useState(exercises[0].duration);
   const [timerActive, setTimerActive] = useState(false);
 
-  // Check authentication when component mounts
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
       } else {
-        // Redirect to login if not authenticated
         navigate('/login');
       }
       setLoading(false);
     });
     
-    // Check if we have required data
     if (!maskModel || !group) {
       setError('Missing test information. Please restart the test.');
     }
     
-    // Clean up subscription and reset spray count when component unmounts
     return () => {
       unsubscribe();
-      // Reset spray count on unmount
       if (!devMode) {
         resetSprayCount();
       }
     };
   }, [navigate, maskModel, group, devMode]);
 
-  // Add timer effect to handle countdown
   useEffect(() => {
     let interval = null;
-    
     if (timerActive && timer > 0) {
       interval = setInterval(() => {
         setTimer(prevTimer => prevTimer - 1);
       }, 1000);
     } else if (timerActive && timer === 0) {
-      // Time is up for current exercise
       setTimerActive(false);
       handleNextExercise();
     } else if (!timerActive && interval) {
       clearInterval(interval);
     }
-    
     return () => {
       if (interval) clearInterval(interval);
     };
   }, [timerActive, timer]);
 
-  // Function to reset spray count
   const resetSprayCount = async () => {
     if (devMode) {
       console.log('DEV MODE: Simulating spray count reset');
       return;
     }
-    
     try {
       const api = await createAuthenticatedClient();
-      console.log('Sending RESET command to Arduino...');
       await api.post('/api/reset-spray');
-      console.log('Spray count reset successfully');
     } catch (error) {
       console.error('Error resetting spray count:', error);
     }
   };
 
-  // Start the exercise
   const startExercise = () => {
     setTimerActive(true);
   };
 
-  // Pause the exercise
   const pauseExercise = () => {
     setTimerActive(false);
   };
 
-  // Move to the next exercise
   const handleNextExercise = () => {
     setTimerActive(false);
-    
-    // Check if we've completed all exercises
     if (currentExercise >= exercises.length - 1) {
-      // All exercises completed, test passed
       handleTestSuccess();
     } else {
-      // Move to next exercise
-      setCurrentExercise(prevExercise => prevExercise + 1);
-      setExercisesCompleted(prevCompleted => prevCompleted + 1);
+      setCurrentExercise(prev => prev + 1);
+      setExercisesCompleted(prev => prev + 1);
       setTimer(exercises[currentExercise + 1].duration);
     }
   };
 
-  // Handle spray button
   const handleSpray = async () => {
     if (spraying) return;
-    
-    // In development mode, just simulate spray
     if (devMode) {
       setSpraying(true);
-      setTimeout(() => {
-        setSpraying(false);
-      }, 2000);
+      setTimeout(() => setSpraying(false), 2000);
       return;
     }
-    
     try {
       setError('');
       setSpraying(true);
-      
-      // Get authenticated API client
       const api = await createAuthenticatedClient();
-      
-      // Send spray request
       const response = await api.post('/api/spray');
-      
-      console.log('Spray response:', response.data);
-      
-      // No need to track spray count here, just ensure it completed
-      if (response.data.error) {
-        throw new Error(response.data.error);
-      }
-    } catch (error) {
-      console.error('Error during spray:', error);
-      setError('Failed to activate spray: ' + (error.message || 'Unknown error'));
+      if (response.data.error) throw new Error(response.data.error);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to activate spray: ' + (err.message || 'Unknown error'));
     } finally {
       setSpraying(false);
     }
   };
 
-  // Handle stop spray
   const handleStopSpray = async () => {
-    // In development mode, do nothing
     if (devMode) return;
-    
     try {
-      // Get authenticated API client
       const api = await createAuthenticatedClient();
-      
-      // Send stop spray request
       await api.post('/api/stop-spray');
-      
-      // Reset spray count after stopping
       await resetSprayCount();
-    } catch (error) {
-      console.error('Error stopping spray:', error);
+    } catch (err) {
+      console.error('Error stopping spray:', err);
     }
   };
 
-  // User smelled the solution, test failed
   const handleTestFailure = async () => {
     setTimerActive(false);
     setTestComplete(true);
     setTestPassed(false);
-    
     try {
-      // Reset spray count before completing test
       await resetSprayCount();
-
-      // Update user document with test results
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
           lastTestDate: serverTimestamp(),
           lastTestResult: 'failed',
           testGroup: group,
-          // We don't update maskModel here since the test failed
         });
       }
-    } catch (error) {
-      console.error('Error recording test failure:', error);
+    } catch (err) {
+      console.error(err);
       setError('Failed to save test results.');
     }
   };
 
-  // User completed all exercises without detecting smell, test passed
   const handleTestSuccess = async () => {
     setTimerActive(false);
     setTestComplete(true);
     setTestPassed(true);
-    
     try {
-      // Reset spray count before completing test
       await resetSprayCount();
-      
-      // Update user document with successful test results
       if (user) {
         await updateDoc(doc(db, "users", user.uid), {
           lastTestDate: serverTimestamp(),
@@ -228,23 +206,18 @@ function ActualMaskFitTest() {
           testGroup: group
         });
       }
-    } catch (error) {
-      console.error('Error recording test success:', error);
+    } catch (err) {
+      console.error(err);
       setError('Failed to save test results.');
     }
   };
 
-  // Navigate to results page
   const handleNavigateToResults = () => {
     navigate('/test-complete', { 
-      state: { 
-        passed: testPassed, 
-        maskModel 
-      } 
+      state: { passed: testPassed, maskModel } 
     });
   };
 
-  // Toggle development mode
   const toggleDevMode = () => {
     setDevMode(!devMode);
   };
@@ -272,19 +245,6 @@ function ActualMaskFitTest() {
     return (
       <div className="mask-fit-test-container">
         <h2>Mask Fit Test Complete</h2>
-        
-        {/* <div className={`result-message ${testPassed ? 'success' : 'failure'}`}>
-          <h3>{testPassed ? 'Congratulations! Test Passed' : 'Test Failed'}</h3>
-          
-          {testPassed ? (
-            <p>You have successfully completed all exercises without detecting the test solution. 
-               The {maskModel} mask fits you properly.</p>
-          ) : (
-            <p>You have detected the test solution, which means the {maskModel} mask does not provide 
-               a proper seal. Please try again with a different mask model.</p>
-          )}
-        </div> */}
-        
         <div className="text-center mt-3">
           <button 
             onClick={handleNavigateToResults}
@@ -303,7 +263,6 @@ function ActualMaskFitTest() {
       
       {error && <p className="error">{error}</p>}
       
-      {/* Dev mode indicator */}
       <div className="dev-mode-controls">
         <label style={{ display: 'flex', alignItems: 'center' }}>
           <input 
@@ -326,6 +285,19 @@ function ActualMaskFitTest() {
       <div className="current-exercise">
         <h3>Current Exercise: {exercises[currentExercise].name}</h3>
         <p>{exercises[currentExercise].description}</p>
+        
+        {/* ─── Video Player ─── */}
+        <div className="exercise-video-wrapper">
+          <video
+            key={exercises[currentExercise].videoSrc}
+            className="exercise-video"
+            src={exercises[currentExercise].videoSrc}
+            controls
+            preload="metadata"
+          >
+            Your browser does not support the video tag.
+          </video>
+        </div>
         
         <div className="timer">
           <p>Time Remaining: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</p>
